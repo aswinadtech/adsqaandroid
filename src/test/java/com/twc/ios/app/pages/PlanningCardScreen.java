@@ -38,7 +38,9 @@ public class PlanningCardScreen extends Utils {
 	By byTodayTab = MobileBy.xpath(todayTab_Xpath);
 	By byTodayGraph = MobileBy.xpath(todayGraph_Xpath);
 	
+	By byPlanningCard = MobileBy.AccessibilityId("planning-card-containerView");
 
+	MobileElement planningCard = null;
 	MobileElement hourlyTab = null;
 	MobileElement selectedHourlyTab = null;
 	MobileElement hourlyGraph = null;
@@ -52,6 +54,30 @@ public class PlanningCardScreen extends Utils {
 
 	public PlanningCardScreen(AppiumDriver<MobileElement> Ad) {
 		this.Ad = Ad;
+	}
+	
+	@Step("Scroll To Planning Card")
+	public  void scrollToPlanningCard() throws Exception {
+		planningCard = Ad.findElement(byPlanningCard);
+		//Functions.genericScroll(byPlanningCard, true, true, getOffsetYTop(), TOLERANCE_FROM_TOP);
+		//Functions.swipe(byPlanningCard, Direction.LEFT,  0.15);
+		Functions.genericScrollTWC(byPlanningCard, true, true, getOffsetYTop(), TOLERANCE_FROM_TOP, false, false);
+		//Functions.swipe(planningCard, Direction.LEFT,  0.15);
+		
+	}
+	
+	@Step("Swipe Left On Planning Card")
+	public  void swipeLeftOnPlanningCard() throws Exception {
+		planningCard = Ad.findElement(byPlanningCard);
+	    Functions.swipe(planningCard, Direction.LEFT,  0.15);
+		
+	}
+	
+	@Step("Swipe Right On Planning Card")
+	public  void swipeRightOnPlanningCard() throws Exception {
+		planningCard = Ad.findElement(byPlanningCard);
+		Functions.swipe(planningCard, Direction.RIGHT,  0.15);
+		
 	}
 
 	@Step("Navigate To Hourly Tab from Planning Card")

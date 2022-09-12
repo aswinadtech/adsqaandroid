@@ -196,12 +196,12 @@ public class USACCPAPrivacyTest extends TwcIosBaseTest {
 	  System.out.println("Kill and Launching the app after privacy optin is selected");
 	  logStep("Kill and Launching the app after privacy optin is selected");
 	  Functions.close_launchApp();
-	  Functions.checkForAppState();
+	  //Functions.checkForAppState();
 	  proxy.clearCharlesSession();
 	  Functions.close_launchApp();
 	  Functions.checkForAppState();
-   	  //Functions.put_Background_launch(15);
-	  //Functions.checkForAppState();
+   	  Functions.put_Background_launch(15);
+	  Functions.checkForAppState();
 	  }
 	 
 
@@ -227,12 +227,12 @@ public class USACCPAPrivacyTest extends TwcIosBaseTest {
 			 * Sometimes Close Advertisement button interstitial button technically disabled,
 			 * hence navigation to other tabs gets failed. hence kill and launching the app after calling the handleinterstiital method. 
 			 */
-			 proxy.clearCharlesSession();
+			 /*proxy.clearCharlesSession();
 			 Functions.close_launchApp();
 			 
 			 Functions.put_Background_launch(15);
 			 Functions.checkForAppState();
-			 hmTab.clickonHomeTab();
+			 hmTab.clickonHomeTab();*/
 			 
 			// navigate to Daily tab
 			dTab.navigateToDailyTab();
@@ -293,7 +293,7 @@ public class USACCPAPrivacyTest extends TwcIosBaseTest {
 	 */
 	@Test(priority = 26, enabled = true)
 	@Description("Amazon aax call verification")
-	public void Verify_Amazon_Call_for_UA() throws Exception {
+	public void Verify_Amazon_Call_for_USACCPA() throws Exception {
 		System.out.println("==============================================");
 		System.out.println("****** amazon-adsystem.com Call test case Started");
 		logStep("****** amazon-adsystem.com Call test case Started");
@@ -436,8 +436,8 @@ public class USACCPAPrivacyTest extends TwcIosBaseTest {
 		proxy.clearCharlesSession();
 		System.out.println("Kill and Launching the app after privacy optout is selected");
 		logStep("Kill and Launching the app after privacy optout is selected");
-		Functions.close_launchApp();
-		Functions.checkForAppState();
+		//Functions.close_launchApp();
+		//Functions.checkForAppState();
 		Functions.close_launchApp();
 		Functions.checkForAppState();
 		proxy.clearCharlesSession();

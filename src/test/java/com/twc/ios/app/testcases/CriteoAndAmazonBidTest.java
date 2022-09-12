@@ -383,9 +383,9 @@ public class CriteoAndAmazonBidTest extends TwcIosBaseTest {
 		Functions.close_launchApp();
 		Functions.checkForAppState();
 		TestBase.waitForMilliSeconds(5000);
-		/*
-		 * Handling Interstitial ad ahead of navigating to all cards
-		 */
+		
+		//Handling Interstitial ad ahead of navigating to all cards
+		 
 		hrTab.navigateToHourlyTabAndHandleInterstitialAd();
 		proxy.clearCharlesSession();
 		Functions.close_launchApp();
@@ -1610,7 +1610,7 @@ public class CriteoAndAmazonBidTest extends TwcIosBaseTest {
 		System.out.println(
 				"****** Enabling Preconfigurations to validate Hourly Big ads amazon bid id's and criteo parameters Started");
 		logStep("****** Enabling Preconfigurations to validate Hourly Big ads amazon bid id's and criteo parameters Started");
-	/*	proxy.clearCharlesSession();
+		proxy.clearCharlesSession();
 		Functions.close_launchApp();
 		Functions.checkForAppState();
 		TestBase.waitForMilliSeconds(5000);
@@ -1625,7 +1625,7 @@ public class CriteoAndAmazonBidTest extends TwcIosBaseTest {
 		Functions.swipe_Up_ByIterations(Ad, 10);
 		hmTab.clickonHomeTab();
 		TestBase.waitForMilliSeconds(5000);
-		proxy.getXml();*/
+		proxy.getXml();
 		Utils.createXMLFileForCharlesSessionFile();
 		// Utils.get_v3_wx_forecast_daily_15day_data();
 
@@ -1817,7 +1817,7 @@ public class CriteoAndAmazonBidTest extends TwcIosBaseTest {
 			proxy.clearCharlesSession();
 			Functions.archive_folder("Charles");
 			// navigate to News Card
-			Utils.navigateTofeedCard("news");
+			Utils.navigateTofeedCard("news", false, false);
 			proxy.clearCharlesSession();
 			nScreen.navigateToNewsDetails();
 			/**

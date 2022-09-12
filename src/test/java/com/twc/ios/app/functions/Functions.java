@@ -3,7 +3,9 @@ package com.twc.ios.app.functions;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.PerformsTouchActions;
 import io.appium.java_client.TouchAction;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.appmanagement.ApplicationState;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.MobileBrowserType;
@@ -54,6 +56,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -85,7 +88,23 @@ import com.twc.ios.app.general.RetryAnalyzer;
 import com.twc.ios.app.general.TestBase;
 import com.twc.ios.app.general.Utils;
 import com.twc.ios.app.pages.AddressScreen;
+import com.twc.ios.app.pages.AirQualityCardScreen;
+import com.twc.ios.app.pages.AlertCenterScreen;
+import com.twc.ios.app.pages.CurrentConditionsCardScreen;
+import com.twc.ios.app.pages.DailyCardScreen;
+import com.twc.ios.app.pages.DailyNavTab;
 import com.twc.ios.app.pages.FTLScreens;
+import com.twc.ios.app.pages.HomeNavTab;
+import com.twc.ios.app.pages.HourlyNavTab;
+import com.twc.ios.app.pages.LifeStyleCardScreen;
+import com.twc.ios.app.pages.NewsCardScreen;
+import com.twc.ios.app.pages.RadarCardScreen;
+import com.twc.ios.app.pages.RadarNavTab;
+import com.twc.ios.app.pages.SeasonalHubCardScreen;
+import com.twc.ios.app.pages.TodayCardScreen;
+import com.twc.ios.app.pages.VideoCardScreen;
+import com.twc.ios.app.pages.VideoNavTab;
+import com.twc.ios.app.pages.WatsonCardScreen;
 import com.twc.ios.app.general.ReadExcelValues;
 
 public class Functions extends Driver {
@@ -199,6 +218,18 @@ public class Functions extends Driver {
 	public static String iuId = null;
 	public static long interstitialFqCapStrtTime = 0L;
 	public static boolean rainCardDisplayed = false;
+	
+	private static final double DEFAULT_PAGE_SCROLL_AMOUNT = 0.74;
+	private static final double DEFAULT_SCROLL_DOWN_STARTING_POINT = 0.75;
+	private static final double DEFAULT_SCROLL_UP_STARTING_POINT = 0.25;
+	private static final double DEFAULT_TOLERANCE_FROM_TOP = 0.03;
+	protected static double TOLERANCE_FROM_TOP = 0.03;
+	public static int genericVariance = 0;
+	public static long duration = 900;
+	public static String firstCard = null;
+	public static String secondCard = null;
+	public static String thirdCard = null;
+	
 	
 	
 	/**
@@ -411,6 +442,37 @@ public class Functions extends Driver {
 
 		// Write_result wrResult1 = new Write_result();
 		// wrResult1.WriteResult("Capabilities", ipaPath.toString(), 14, Cap);
+	}
+	
+	/**
+	 * Launch the Airbnb App
+	 * @throws Exception
+	 */
+	public static void launchtheAirbnbApp() throws Exception {
+		
+		DesiredCapabilities capabilities = new DesiredCapabilities();
+
+		// Capabilities for IOS and Android Based on Selected on Device Selection
+		capabilities.setCapability("deviceName", "iPhone");
+		capabilities.setCapability("udid", "00008030-001825112238802E");
+		capabilities.setCapability("platformName", "iOS");
+		capabilities.setCapability("platformVersion", "15.4.1");
+		capabilities.setCapability("bundleId", "com.airbnb.app");
+		capabilities.setCapability("automationName", "XCUITest");
+		capabilities.setCapability("noReset", true);
+		capabilities.setCapability("autoLaunch", true);
+		capabilities.setCapability("launchTimeout", 60000);
+		//capabilities.setCapability("useNewWDA", true);
+		capabilities.setCapability("wdaLocalPort", "7403");
+		capabilities.setCapability("clearSystemFiles", true);
+		System.out.println("Reading capabilities done");
+		// Wait time for Execution of node.js
+		// TestBase.waitForMilliSeconds(10000);
+		Ad = new IOSDriver(new URL("http://127.0.0.1:4733/wd/hub"), capabilities);
+		// Ad= new IOSDriver<MobileElement>(service, capabilities);
+		Ad.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		System.out.println("Airbnb App Launched");
+		
 	}
 	
 	/**
@@ -1026,7 +1088,7 @@ public class Functions extends Driver {
 		Ad1.findElementByAccessibilityId("The Weather Channel").click();
 		TestBase.waitForMilliSeconds(10000);
 		ftlScreens = new FTLScreens(Ad1);
-		ftlScreens.handle_Unwanted_Popups_When_App_Launched_From_Widget();
+		ftlScreens.handle_Unwanted_Popups_When_App_Launched_From_Widget(Ad1);
 		attachScreen(Ad1);
 	}
 
@@ -1481,9 +1543,7 @@ public class Functions extends Driver {
 
 		}
 	}
-
 	
-
 	/**
 	 * Wait for an Element
 	 * @param Element
@@ -1530,6 +1590,33 @@ public class Functions extends Driver {
 //			TestBase.waitForMilliSeconds(5000);
 			ftlScreens = new FTLScreens(Ad);
 			ftlScreens.handle_Unwanted_Popups();
+			// attachScreen();
+		} catch (Exception e) {
+			System.out.println("App  close / Launch failed");
+			logStep("App  close / Launch failed");
+		}
+
+	}
+	
+	/**
+	 * Close and launch the app
+	 * Note appium 1.23.0 beta doesnt support closeApp() and launchApp(), hence used terminateApp() and activateApp() instead
+	 */
+	public static void close_launchApp(AppiumDriver<MobileElement> Ad) {
+		FTLScreens ftlScreens;
+		try {
+			//Ad.closeApp();
+			Ad.terminateApp("com.weather.TWC");
+			System.out.println("App Closed SuccessFully");
+			logStep("App Closed SuccessFully");
+//			TestBase.waitForMilliSeconds(5000);
+			Ad.launchApp();
+			//Ad.activateApp("com.weather.TWC");
+			System.out.println("App Launched SuccessFully");
+			logStep("App Launched SuccessFully");
+//			TestBase.waitForMilliSeconds(5000);
+			ftlScreens = new FTLScreens(Ad);
+			ftlScreens.handle_Unwanted_Popups(Ad);
 			// attachScreen();
 		} catch (Exception e) {
 			System.out.println("App  close / Launch failed");
@@ -1695,6 +1782,7 @@ public class Functions extends Driver {
 	 * Click on Continue
 	 */
 	public static void click_Continue() {
+		attachScreen();
 		try {
 			Ad.findElementByAccessibilityId("Confirm").click();
 			TestBase.waitForMilliSeconds(2000);
@@ -1705,7 +1793,6 @@ public class Functions extends Driver {
 			} catch (Exception e1) {
 				System.out.println("An Exception while clicking on Continue button");
 				logStep("An Exception while clicking on Continue button");
-				attachScreen();
 				Assert.fail("An Exception while clicking on Continue button");
 			}
 
@@ -1868,8 +1955,8 @@ public class Functions extends Driver {
 						//WebDriverWait wait = new WebDriverWait(Ad, 120);
 						//wait.until(ExpectedConditions.visibilityOfElementLocated(MobileBy.AccessibilityId("Close Advertisement")));
 						if (interstitalAd.getAttribute("enabled").equalsIgnoreCase("false") && interstitalAd.getAttribute("visible").equalsIgnoreCase("false")) {
-							System.out.println("Since Element is neither enabled nor visible, tring with Javascript Executor");
-							logStep("Since Element is neither enabled nor visible, tring with Javascript Executor");
+							System.out.println("Since Element is neither enabled nor visible, trying with Javascript Executor");
+							logStep("Since Element is neither enabled nor visible, trying with Javascript Executor");
 							try {
 								Point location = interstitalAd.getLocation();
 								ta.press(PointOption.point(location.getX(), location.getY())).release().perform();
@@ -1889,7 +1976,7 @@ public class Functions extends Driver {
 							
 						} else if (!interstitalAd.isDisplayed() && !interstitalAd.isEnabled()) {
 							ta.tap(PointOption.point(29, 22))
-									.waitAction(WaitOptions.waitOptions(Duration.ofMillis(2000))).perform();
+									.waitAction(WaitOptions.waitOptions(Duration.ofMillis(2000))).perform().release();
 							System.out.println("Inside If Loop");
 							logStep("Inside If Loop");
 						} else {
@@ -1943,6 +2030,9 @@ public class Functions extends Driver {
 								logStep("Interstitial Ad displayed after closed");
 								Ad.findElementByAccessibilityId("Close").click();
 								interstitialFqCapStrtTime = System.nanoTime();
+							} else  {
+								System.out.println("Interstitial Ad displayed on the  card and closed");
+								logStep("Interstitial Ad displayed on the  card and closed");
 							}
 
 						} catch (Exception e) {
@@ -1950,8 +2040,22 @@ public class Functions extends Driver {
 						}
 
 						// interStitialChecked = true;
-						System.out.println("Interstitial Ad displayed on the  card and closed");
-						logStep("Interstitial Ad displayed on the  card and closed");
+						//System.out.println("Interstitial Ad displayed on the  card and closed");
+						//logStep("Interstitial Ad displayed on the  card and closed");
+						/**
+						 * Sometimes interstitia not able to closed due to Enable is false.. hence final check if interstitial still on the screen
+						 * if true, kill and launching the app
+						 */
+						
+						try {
+							interstitalAd = Ad.findElementByAccessibilityId("Close Advertisement");
+							System.out.println("Interstitial Ad not handled, hence kill and launch the app");
+							logStep("Interstitial Ad not handled, hence kill and launch the app");
+							Functions.close_launchApp();
+						} catch(Exception e) {
+							System.out.println("Interstitial Ad handled");
+							logStep("Interstitial Ad handled");
+						}
 					} catch (Exception e) {
 						interStitialDisplayed = false;
 						System.out.println("Interstitial Ad not displayed on the  card");
@@ -3499,7 +3603,7 @@ public class Functions extends Driver {
 		
 		try {
 			// clicking on Privacy
-			Ad1.findElementByXPath("//XCUIElementTypeStaticText[@name=\"Privacy\"]").click();
+			Ad1.findElementByXPath("//XCUIElementTypeStaticText[@name=\"Privacy & Security\"]").click();
 			System.out.println("Clicked on Privacy on Settings screen");
 			logStep("Clicked on Privacy on Settings screen");
 			try {
@@ -3510,7 +3614,7 @@ public class Functions extends Driver {
 				
 				try {
 					//Checking for Back button on Tracking Screen
-					Ad1.findElementByXPath("//XCUIElementTypeButton[@name=\"Privacy\"]");
+					Ad1.findElementByXPath("//XCUIElementTypeButton[@name=\"Privacy & Security\"]");
 					
 					AdsTestSwitch = Ad1.findElementByXPath("//XCUIElementTypeSwitch[@name=\"Allow Apps to Request to Track\"]");
 					
@@ -3533,7 +3637,7 @@ public class Functions extends Driver {
 							for (int i = 1; i < listOfAppsToTrack.size(); i++) {
 								listOfAppsToTrack.get(i).click();
 							}
-							Ad1.findElementByXPath("//XCUIElementTypeButton[@name=\"Privacy\"]").click();
+							Ad1.findElementByXPath("//XCUIElementTypeButton[@name=\"Privacy & Security\"]").click();
 						}
 					} else {
 						if (SwitchValue.equals("1")) {
@@ -3546,12 +3650,12 @@ public class Functions extends Driver {
 							if (TestBase.isElementExists(By.xpath("//XCUIElementTypeButton[@name=\"Ask Apps to Stop Tracking\"]"), Ad1)) {
 								Ad1.findElementByXPath("//XCUIElementTypeButton[@name=\"Ask Apps to Stop Tracking\"]").click();
 							}
-							Ad1.findElementByXPath("//XCUIElementTypeButton[@name=\"Privacy\"]").click();
+							Ad1.findElementByXPath("//XCUIElementTypeButton[@name=\"Privacy & Security\"]").click();
 						} else {
 							attachScreen(Ad1);
 							System.out.println("Tracking already disabled");
 							logStep("Tracking already disabled");
-							Ad1.findElementByXPath("//XCUIElementTypeButton[@name=\"Privacy\"]").click();
+							Ad1.findElementByXPath("//XCUIElementTypeButton[@name=\"Privacy & Security\"]").click();
 						}
 					}
 				
@@ -3647,5 +3751,1159 @@ public class Functions extends Driver {
 		}
 
 	}
+	
+	public static int getOffsetYTop() {
+
+		int offset = 0;
+		try {
+			// for IOS
+			if(Ad instanceof IOSDriver<?>) {
+				By navBarClassBy = By.className("XCUIElementTypeNavigationBar");
+				WebElement navBar = Ad.findElement(navBarClassBy);
+				Rectangle r = navBar.getRect();
+				offset = r.y + r.getHeight();
+			} else if(Ad instanceof AndroidDriver<?>) {
+				By toolbarIdBy = By.id(":id/main_feed_toolbar");
+				WebElement toolbar = Ad.findElement(toolbarIdBy);
+				Rectangle r = toolbar.getRect();
+				offset = r.y + r.getHeight();
+			}
+		} catch (WebDriverException e) {
+		}
+		return offset;
+	
+		//return 0;
+	}
+	
+	/**
+	 * GENERIC ONE
+	 * @param item
+	 * @param down
+	 * @param scrollToTop
+	 * @param offsetY
+	 */
+	public static void genericScroll(By locator, boolean down, boolean scrollToTop, int offsetY, double tolerance) throws Exception {
+
+		
+		final long startTime = Calendar.getInstance().getTimeInMillis();
+		long currTime = startTime;
+		final Dimension dim = Ad.manage().window().getSize();
+		int startY = (int)(dim.height * DEFAULT_SCROLL_DOWN_STARTING_POINT);
+		int moveY = -(int)(dim.height * DEFAULT_PAGE_SCROLL_AMOUNT);
+		// If scrolling up, use 15% so we start beyond the search bar/toolbar
+		// and make Y a positive value
+		if(!down) {
+			startY = (int)(dim.height * DEFAULT_SCROLL_UP_STARTING_POINT);
+			moveY = moveY * -1;
+		}
+		boolean elementFound = false;
+		elementFound = TestBase.isElementDisplayed(locator);
+		while(!elementFound) {
+			performScrollTouchAction(1, startY, 0, moveY);
+			currTime = Calendar.getInstance().getTimeInMillis();
+			elementFound = TestBase.isElementDisplayed(locator);
+		}
+		
+			System.out.println("Scroll complete, Expected element: " + locator + " found: " + elementFound);
+		
+		
+		if(scrollToTop) {
+			System.out.println("Moving element to top");
+			moveElementToTop(locator, dim, offsetY, tolerance);
+		}
+		currTime = Calendar.getInstance().getTimeInMillis();
+		final long mins = TimeUnit.MILLISECONDS.toMinutes(currTime - startTime);
+		final long secs = TimeUnit.MILLISECONDS.toSeconds(currTime - startTime) - (mins * 60);
+		
+	
+	}
+
+	/**
+	 * GENERIC ONE For Airbnb
+	 * @param locator
+	 * @param down
+	 * @param scrollToTop
+	 * @param offsetY
+	 * @param tolerance
+	 * @throws Exception
+	 */
+	public static void genericScrollAirbnb(By locator, boolean down, boolean scrollToTop, int offsetY, double tolerance)
+			throws Exception {
+
+		int i = 0;
+		while (i < 20) {
+			By byele = MobileBy.xpath("//XCUIElementTypeCollectionView/XCUIElementTypeCell[1]");
+			MobileElement ele = Ad.findElement(byele);
+			Point loc = ele.getLocation();
+			System.out.println("Element located at " + loc);
+			final Dimension dim = ele.getSize();
+			int startY = loc.y + (int) (dim.height);
+			int moveY = -(int) (dim.height);
+			if (loc.y < 0) {
+				genericVariance = 44;
+				performScrollTouchAction(1, startY, 0, -startY + 174);
+			} else {
+				performScrollTouchAction(1, startY, 0, moveY);
+			}
+
+			i++;
+		}
+	}
+	
+	/**
+	 * Scoll On Airbnb App
+	 * @throws Exception
+	 */
+	public static void scrollOnAirbnb() throws Exception {
+		//aQCard = Ad.findElement(byAirQualityCard);
+		Functions.genericScrollAirbnb(MobileBy.AccessibilityId("air-quality-card"), true, true, 174, TOLERANCE_FROM_TOP);
+	}
+
+	/**
+	 * This Method used to Scroll on TWC app and scroll up one card each time and
+	 * navigate content pages of respective cards if applicable. Scrolling will end
+	 * once it finds the footer text
+	 * 
+	 * @param locator
+	 * @param down
+	 * @param scrollToTop
+	 * @param offsetY
+	 * @param tolerance
+	 * @param includeDetailsPages
+	 * @param navigateTwiceToDetailsPages
+	 * @throws Exception
+	 */
+	public static void genericScrollTWC(By locator, boolean down, boolean scrollToTop, int offsetY, double tolerance,
+			boolean includeDetailsPages, boolean navigateTwiceToDetailsPages) throws Exception {
+		HomeNavTab hmTab = new HomeNavTab(Ad);
+		HourlyNavTab hrTab = new HourlyNavTab(Ad);
+		DailyNavTab dTab = new DailyNavTab(Ad);
+		RadarNavTab rTab = new RadarNavTab(Ad);
+		VideoNavTab vTab = new VideoNavTab(Ad);
+		AlertCenterScreen alertScreen = new AlertCenterScreen(Ad);
+		CurrentConditionsCardScreen cConditionsCardScreen = new CurrentConditionsCardScreen(Ad);
+		LifeStyleCardScreen lStyleCardScreen = new LifeStyleCardScreen(Ad);
+		SeasonalHubCardScreen sHubCardScreen = new SeasonalHubCardScreen(Ad);
+		DailyCardScreen dCardScreen = new DailyCardScreen(Ad);
+		RadarCardScreen rCardScreen = new RadarCardScreen(Ad);
+		TodayCardScreen tCardScreen = new TodayCardScreen(Ad);
+		VideoCardScreen vCardScreen = new VideoCardScreen(Ad);
+		AirQualityCardScreen aqCardScreen = new AirQualityCardScreen(Ad);
+		NewsCardScreen nCardScreen = new NewsCardScreen(Ad);
+		WatsonCardScreen wCardScreen = new WatsonCardScreen(Ad);
+
+		String cardName = "homescreen";
+		String feedName = null;
+		ArrayList<String> cardsList = new ArrayList<String>();
+		nextGenIMadDisplayed = false;
+		rainCardDisplayed = false;
+		feedAdCount = 0;
+
+		boolean elementFound = false;
+		elementFound = TestBase.isElementDisplayed(locator);
+		while (!elementFound) {
+			/*
+			 * List<MobileElement> els = Ad.findElements(MobileBy.xpath(
+			 * "//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell"));
+			 * System.out.println("Number Of Cards In List " + els.size() );
+			 * System.out.println("********************************************"); for
+			 * (MobileElement el: els) { Point loc = el.getLocation();
+			 * System.out.println("Element located at " + loc ); Dimension dim =
+			 * el.getSize(); System.out.println("Element Dimensions " + dim ); }
+			 */
+			System.out.println("********************************************");
+			By byele = MobileBy.xpath("//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell[1]");
+			MobileElement ele = Ad.findElement(byele);
+			Point loc = ele.getLocation();
+			System.out.println("Element located at " + loc);
+			Dimension dim = ele.getSize();
+			System.out.println("Element Dimensions " + dim);
+			int startY = loc.y + (int) (dim.height);
+			int moveY = -(int) (dim.height);
+			if (startY == 88 || startY <= 88) {
+				byele = MobileBy.xpath("//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell[2]");
+				ele = Ad.findElement(byele);
+				loc = ele.getLocation();
+				System.out.println("Element located at " + loc);
+				dim = ele.getSize();
+				System.out.println("Element Dimensions " + dim);
+				startY = loc.y + (int) (dim.height);
+				moveY = -(int) (dim.height);
+				if (startY == 88 || startY <= 88) {
+					byele = MobileBy.xpath("//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell[3]");
+					ele = Ad.findElement(byele);
+					loc = ele.getLocation();
+					System.out.println("Element located at " + loc);
+					dim = ele.getSize();
+					System.out.println("Element Dimensions " + dim);
+					startY = loc.y + (int) (dim.height);
+					moveY = -(int) (dim.height);
+
+				}
+			}
+
+			if (loc.y < 0) {
+				genericVariance = 10;
+				performScrollTouchAction(1, startY, 0, -startY + 88);
+			} else {
+				try {
+					cardName = ele
+							.findElement(By.xpath(
+									"//XCUIElementTypeOther[@name='nextgen-integrated-marquee-card-containerView']"))
+							.getAttribute("name");
+				} catch (Exception e) {
+					try {
+						cardName = ele.findElement(By.xpath("//XCUIElementTypeOther/XCUIElementTypeStaticText"))
+								.getAttribute("name");
+					} catch (Exception e1) {
+						try {
+							// some times when big advertisement displayed, it doenst have name as
+							// 'Advertisement' hence below implemented
+							cardName = ele
+									.findElement(By.xpath("//XCUIElementTypeOther[@name='ads-card-containerView']"))
+									.getAttribute("name");
+
+						} catch (Exception e2) {
+							try {
+								// when Integrated Feed card is displayed, it doenst have name as
+								// 'Advertisement' hence below implemented
+								cardName = ele
+										.findElement(By.xpath(
+												"//XCUIElementTypeOther[@name='integrated-ad-card-containerView']"))
+										.getAttribute("name");
+
+							} catch (Exception e3) {
+								cardName = ele.findElement(By.xpath("(//XCUIElementTypeOther)[3]"))
+										.getAttribute("name");
+							}
+						}
+
+					}
+				}
+
+				if (cardName.equalsIgnoreCase("Advertisement")) {
+					try {
+						feedName = ele.findElement(By.xpath(
+								"//XCUIElementTypeStaticText[@name='Advertisement']//parent::XCUIElementTypeOther"))
+								.getAttribute("name");
+						cardName = feedName.replaceAll("-adContainerView", "");
+					} catch (Exception e) {
+						// following is added to handle Integrated Feed Card while getting card name.
+						try {
+							feedName = ele.findElement(By.xpath(
+									"//XCUIElementTypeStaticText[@name='Advertisement']//parent::XCUIElementTypeOther/following-sibling::XCUIElementTypeOther"))
+									.getAttribute("name");
+							cardName = feedName.replaceAll("-adContainerView", "");
+						} catch (Exception e1) {
+							cardName = "Advertisement";
+						}
+					}
+
+				} else if (cardName.equalsIgnoreCase("ads-card-containerView")) {
+					try {
+						feedName = ele
+								.findElement(By.xpath(
+										"//XCUIElementTypeOther[@name='ads-card-containerView']/XCUIElementTypeOther"))
+								.getAttribute("name");
+						cardName = feedName.replaceAll("-adContainerView", "");
+					} catch (Exception e) {
+						cardName = "Advertisement";
+					}
+				} else if (cardName.equalsIgnoreCase("integrated-ad-card-containerView")) {
+					try {
+						feedName = ele.findElement(By.xpath(
+								"//XCUIElementTypeOther[@name='integrated-ad-card-containerView']//XCUIElementTypeOther[contains(@name,'-adContainerView')]"))
+								.getAttribute("name");
+						cardName = feedName.replaceAll("-adContainerView", "");
+					} catch (Exception e) {
+						cardName = "Advertisement";
+					}
+				}
+				cardsList.add(cardName);
+				System.out.println("Current Card is : " + cardName);
+				logStep("Current Card is : " + cardName);
+				attachScreen();
+
+				if (cardName.equalsIgnoreCase("nextgen-integrated-marquee-card-containerView")) {
+					nextGenIMadDisplayed = true;
+				} else if (cardName.equalsIgnoreCase("Rain")) {
+					rainCardDisplayed = true;
+				}
+
+				cardName = Utils.shortCardName(cardName);
+
+				if (cardName.contains("weather.feed") || cardName.contains("Advertisement")) {
+					feedAdCount++;
+				}
+
+				if (includeDetailsPages && !cardName.contains("weather.feed")) {
+					try {
+
+						if (cardName.equalsIgnoreCase("lifestyle")) {
+							lStyleCardScreen.navigateToLifeStyleCardIndexes();
+							if (navigateTwiceToDetailsPages) {
+								lStyleCardScreen.navigateToLifeStyleCardIndexes();
+							}
+						} else if (cardName.equalsIgnoreCase("seasonalhub")) {
+							// sHubCardScreen.navigateToFirstIndexOfSeasonalHubCard();
+							sHubCardScreen.navigateToSeasonalHubCardIndexes();
+							if (navigateTwiceToDetailsPages) {
+								// sHubCardScreen.navigateToFirstIndexOfSeasonalHubCard();
+								sHubCardScreen.navigateToSeasonalHubCardIndexes();
+							}
+						} else if (cardName.equalsIgnoreCase("daily")) {
+							dCardScreen.navigateToDailyCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								dCardScreen.navigateToDailyCardContentPage();
+							}
+						} else if (cardName.equalsIgnoreCase("hurricane-central")) {
+							// navigate to hurricanecentral card content page
+						} else if (cardName.equalsIgnoreCase("radar.largead")) {
+							rCardScreen.navigateToRadarCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								rCardScreen.navigateToRadarCardContentPage();
+							}
+						} else if (cardName.equalsIgnoreCase("snapshot")) {
+							// navigate to snapshot card content page
+						} else if (cardName.equalsIgnoreCase("today")) {
+							tCardScreen.navigateToTodayCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								tCardScreen.navigateToTodayCardContentPage();
+							}
+						} else if (cardName.equalsIgnoreCase("video")) {
+							vCardScreen.navigateToVideoCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								vCardScreen.navigateToVideoCardContentPage();
+							}
+
+						} else if (cardName.equalsIgnoreCase("aq")) {
+							aqCardScreen.navigateToAirQualityCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								aqCardScreen.navigateToAirQualityCardContentPage();
+							}
+
+						} else if (cardName.equalsIgnoreCase("news")) {
+							nCardScreen.navigateToNewsCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								nCardScreen.navigateToNewsCardContentPage();
+							}
+
+						} else if (cardName.equalsIgnoreCase("watson-allergy")) {
+							// wCardScreen.navigateToWatsonCardContentPage(includeDetailsPages);
+
+						} else if (cardName.equalsIgnoreCase("watson-cold-and-flu")) {
+							// wCardScreen.navigateToWatsonCardContentPage(includeDetailsPages);
+
+						}
+
+					} catch (Exception e) {
+
+					}
+				}
+
+				performScrollTouchAction(1, startY, 0, moveY);
+			}
+			elementFound = TestBase.isElementDisplayed(locator);
+			if (elementFound) {
+				System.out.println("Element found in the view");
+				attachScreen();
+				System.out.println("User done scrolling, Printing last 3 cards when Scroll ends");
+				logStep("User done scrolling, Printing last 3 cards when Scroll ends");
+
+				getLastThreeCardsNames();
+			}
+
+		}
+
+		System.out.println("Cards List: " + cardsList);
+		logStep("Cards List: " + cardsList);
+		System.out.println("Total no of Feed Ad Cards counted are :" + feedAdCount);
+		logStep("Total no of Feed Ad Cards counted are :" + feedAdCount);
+
+				
+		ReadExcelValues.excelValues("Smoke", "General");
+		By byFooterCard = MobileBy.name(ReadExcelValues.data[1][Cap]);
+		
+		boolean footerElementFound = false;
+		footerElementFound = TestBase.isElementDisplayed(byFooterCard);
+		
+		if (footerElementFound) {
+			System.out.println("Since footer element found on screen, can't move element to top");
+		} else {
+			final Dimension dim1 = Ad.manage().window().getSize();
+			if (scrollToTop) {
+				System.out.println("Moving element to top");
+				moveElementToTop(locator, dim1, offsetY, tolerance);
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param desiredCardName
+	 * @param down
+	 * @param scrollToTop
+	 * @param offsetY
+	 * @param tolerance
+	 * @param includeDetailsPages
+	 * @param navigateTwiceToDetailsPages
+	 * @throws Exception
+	 */
+	public static void genericScrollTWC(String desiredCardName, boolean down, boolean scrollToTop, int offsetY, double tolerance,
+			boolean includeDetailsPages, boolean navigateTwiceToDetailsPages) throws Exception {
+		HomeNavTab hmTab = new HomeNavTab(Ad);
+		HourlyNavTab hrTab = new HourlyNavTab(Ad);
+		DailyNavTab dTab = new DailyNavTab(Ad);
+		RadarNavTab rTab = new RadarNavTab(Ad);
+		VideoNavTab vTab = new VideoNavTab(Ad);
+		AlertCenterScreen alertScreen = new AlertCenterScreen(Ad);
+		CurrentConditionsCardScreen cConditionsCardScreen = new CurrentConditionsCardScreen(Ad);
+		LifeStyleCardScreen lStyleCardScreen = new LifeStyleCardScreen(Ad);
+		SeasonalHubCardScreen sHubCardScreen = new SeasonalHubCardScreen(Ad);
+		DailyCardScreen dCardScreen = new DailyCardScreen(Ad);
+		RadarCardScreen rCardScreen = new RadarCardScreen(Ad);
+		TodayCardScreen tCardScreen = new TodayCardScreen(Ad);
+		VideoCardScreen vCardScreen = new VideoCardScreen(Ad);
+		AirQualityCardScreen aqCardScreen = new AirQualityCardScreen(Ad);
+		NewsCardScreen nCardScreen = new NewsCardScreen(Ad);
+		WatsonCardScreen wCardScreen = new WatsonCardScreen(Ad);
+		
+		ReadExcelValues.excelValues("Smoke", "General");
+		By byFooterCard = MobileBy.name(ReadExcelValues.data[1][Cap]);
+
+		MobileElement ele = null;
+		String cardName = "homescreen";
+		String feedName = null;
+		ArrayList<String> cardsList = new ArrayList<String>();
+		nextGenIMadDisplayed = false;
+		rainCardDisplayed = false;
+		feedAdCount = 0;
+		firstCard = null;
+		secondCard = null;
+		thirdCard = null;
+		duration = TimeUnit.SECONDS.toMillis(duration);
+		final long startTime = Calendar.getInstance().getTimeInMillis();
+		long currTime = startTime;
+		
+		boolean elementFound = false;
+		if (cardName.equalsIgnoreCase(desiredCardName)) {
+			elementFound = true;
+		}
+		boolean footerElementFound = false;
+		footerElementFound = TestBase.isElementDisplayed(byFooterCard);
+		while (!elementFound && !footerElementFound && ((currTime - startTime) <= duration)) {
+			/*
+			 * List<MobileElement> els = Ad.findElements(MobileBy.xpath(
+			 * "//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell"));
+			 * System.out.println("Number Of Cards In List " + els.size() );
+			 * System.out.println("********************************************"); for
+			 * (MobileElement el: els) { Point loc = el.getLocation();
+			 * System.out.println("Element located at " + loc ); Dimension dim =
+			 * el.getSize(); System.out.println("Element Dimensions " + dim ); }
+			 */
+			System.out.println("********************************************");
+			By byele = MobileBy.xpath("//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell[1]");
+			ele = Ad.findElement(byele);
+			Point loc = ele.getLocation();
+			System.out.println("Element located at " + loc);
+			Dimension dim = ele.getSize();
+			System.out.println("Element Dimensions " + dim);
+			int startY = loc.y + (int) (dim.height);
+			int moveY = -(int) (dim.height);
+			if (startY == 88 || startY <= 88) {
+				byele = MobileBy.xpath("//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell[2]");
+				ele = Ad.findElement(byele);
+				loc = ele.getLocation();
+				System.out.println("Element located at " + loc);
+				dim = ele.getSize();
+				System.out.println("Element Dimensions " + dim);
+				startY = loc.y + (int) (dim.height);
+				moveY = -(int) (dim.height);
+				if (startY == 88 || startY <= 88) {
+					byele = MobileBy.xpath("//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell[3]");
+					ele = Ad.findElement(byele);
+					loc = ele.getLocation();
+					System.out.println("Element located at " + loc);
+					dim = ele.getSize();
+					System.out.println("Element Dimensions " + dim);
+					startY = loc.y + (int) (dim.height);
+					moveY = -(int) (dim.height);
+
+				}
+			}
+
+			if (loc.y < 0) {
+				genericVariance = 10;
+				performScrollTouchAction(1, startY, 0, -startY + 88);
+			} else {
+				try {
+					cardName = ele
+							.findElement(By.xpath(
+									"//XCUIElementTypeOther[@name='nextgen-integrated-marquee-card-containerView']"))
+							.getAttribute("name");
+				} catch (Exception e) {
+					try {
+						cardName = ele.findElement(By.xpath("//XCUIElementTypeOther/XCUIElementTypeStaticText"))
+								.getAttribute("name");
+					} catch (Exception e1) {
+						try {
+							// some times when big advertisement displayed, it doenst have name as
+							// 'Advertisement' hence below implemented
+							cardName = ele
+									.findElement(By.xpath("//XCUIElementTypeOther[@name='ads-card-containerView']"))
+									.getAttribute("name");
+
+						} catch (Exception e2) {
+							try {
+								// when Integrated Feed card is displayed, it doenst have name as
+								// 'Advertisement' hence below implemented
+								cardName = ele
+										.findElement(By.xpath(
+												"//XCUIElementTypeOther[@name='integrated-ad-card-containerView']"))
+										.getAttribute("name");
+
+							} catch (Exception e3) {
+								cardName = ele.findElement(By.xpath("(//XCUIElementTypeOther)[3]"))
+										.getAttribute("name");
+							}
+						}
+
+					}
+				}
+
+				if (cardName.equalsIgnoreCase("Advertisement")) {
+					try {
+						feedName = ele.findElement(By.xpath(
+								"//XCUIElementTypeStaticText[@name='Advertisement']//parent::XCUIElementTypeOther"))
+								.getAttribute("name");
+						cardName = feedName.replaceAll("-adContainerView", "");
+					} catch (Exception e) {
+						// following is added to handle Integrated Feed Card while getting card name.
+						try {
+							feedName = ele.findElement(By.xpath(
+									"//XCUIElementTypeStaticText[@name='Advertisement']//parent::XCUIElementTypeOther/following-sibling::XCUIElementTypeOther"))
+									.getAttribute("name");
+							cardName = feedName.replaceAll("-adContainerView", "");
+						} catch (Exception e1) {
+							cardName = "Advertisement";
+						}
+					}
+
+				} else if (cardName.equalsIgnoreCase("ads-card-containerView")) {
+					try {
+						feedName = ele
+								.findElement(By.xpath(
+										"//XCUIElementTypeOther[@name='ads-card-containerView']/XCUIElementTypeOther"))
+								.getAttribute("name");
+						cardName = feedName.replaceAll("-adContainerView", "");
+					} catch (Exception e) {
+						cardName = "Advertisement";
+					}
+				} else if (cardName.equalsIgnoreCase("integrated-ad-card-containerView")) {
+					try {
+						feedName = ele.findElement(By.xpath(
+								"//XCUIElementTypeOther[@name='integrated-ad-card-containerView']//XCUIElementTypeOther[contains(@name,'-adContainerView')]"))
+								.getAttribute("name");
+						cardName = feedName.replaceAll("-adContainerView", "");
+					} catch (Exception e) {
+						cardName = "Advertisement";
+					}
+				}
+				cardsList.add(cardName);
+				System.out.println("Current Card is : " + cardName);
+				logStep("Current Card is : " + cardName);
+				attachScreen();
+
+				if (cardName.equalsIgnoreCase("nextgen-integrated-marquee-card-containerView")) {
+					nextGenIMadDisplayed = true;
+				} else if (cardName.equalsIgnoreCase("Rain")) {
+					rainCardDisplayed = true;
+				}
+
+				cardName = Utils.shortCardName(cardName);
+
+				if (cardName.contains("weather.feed") || cardName.contains("Advertisement")) {
+					feedAdCount++;
+				}
+
+				if (includeDetailsPages && !cardName.contains("weather.feed")) {
+					try {
+
+						if (cardName.equalsIgnoreCase("lifestyle")) {
+							lStyleCardScreen.navigateToLifeStyleCardIndexes();
+							if (navigateTwiceToDetailsPages) {
+								lStyleCardScreen.navigateToLifeStyleCardIndexes();
+							}
+						} else if (cardName.equalsIgnoreCase("seasonalhub")) {
+							// sHubCardScreen.navigateToFirstIndexOfSeasonalHubCard();
+							sHubCardScreen.navigateToSeasonalHubCardIndexes();
+							if (navigateTwiceToDetailsPages) {
+								// sHubCardScreen.navigateToFirstIndexOfSeasonalHubCard();
+								sHubCardScreen.navigateToSeasonalHubCardIndexes();
+							}
+						} else if (cardName.equalsIgnoreCase("daily")) {
+							dCardScreen.navigateToDailyCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								dCardScreen.navigateToDailyCardContentPage();
+							}
+						} else if (cardName.equalsIgnoreCase("hurricane-central")) {
+							// navigate to hurricanecentral card content page
+						} else if (cardName.equalsIgnoreCase("radar.largead")) {
+							rCardScreen.navigateToRadarCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								rCardScreen.navigateToRadarCardContentPage();
+							}
+						} else if (cardName.equalsIgnoreCase("snapshot")) {
+							// navigate to snapshot card content page
+						} else if (cardName.equalsIgnoreCase("today")) {
+							tCardScreen.navigateToTodayCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								tCardScreen.navigateToTodayCardContentPage();
+							}
+						} else if (cardName.equalsIgnoreCase("video")) {
+							vCardScreen.navigateToVideoCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								vCardScreen.navigateToVideoCardContentPage();
+							}
+
+						} else if (cardName.equalsIgnoreCase("aq")) {
+							aqCardScreen.navigateToAirQualityCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								aqCardScreen.navigateToAirQualityCardContentPage();
+							}
+
+						} else if (cardName.equalsIgnoreCase("news")) {
+							nCardScreen.navigateToNewsCardContentPage();
+							if (navigateTwiceToDetailsPages) {
+								nCardScreen.navigateToNewsCardContentPage();
+							}
+
+						} else if (cardName.equalsIgnoreCase("watson-allergy")) {
+							// wCardScreen.navigateToWatsonCardContentPage(includeDetailsPages);
+
+						} else if (cardName.equalsIgnoreCase("watson-cold-and-flu")) {
+							// wCardScreen.navigateToWatsonCardContentPage(includeDetailsPages);
+
+						}
+
+					} catch (Exception e) {
+
+					}
+				}
+				
+				if (cardName.equalsIgnoreCase(desiredCardName)) {
+					elementFound = true;
+				}
+				if (elementFound) {
+					System.out.println("Element found in the view");
+					attachScreen();
+					System.out.println("User done scrolling, Printing last 3 cards when Scroll ends");
+					logStep("User done scrolling, Printing last 3 cards when Scroll ends");
+
+					//getLastThreeCardsNames();
+//					break;
+				} else if (cardName.equalsIgnoreCase("Rain") && desiredCardName.equalsIgnoreCase("radar.largead")) {
+					
+					System.out.println("Since Rain Card appears, Map Card will not be displayed, hence skipping the navigation and further validation");
+					logStep("Since Rain Card appears, Map Card will not be displayed, hence skipping the navigation and further validation");
+
+					break;
+				} else {
+					performScrollTouchAction(1, startY, 0, moveY);
+				}
+
+				
+			}
+			footerElementFound = TestBase.isElementDisplayed(byFooterCard);
+			currTime = Calendar.getInstance().getTimeInMillis();
+
+		}
+		getLastThreeCardsNames();
+		
+		System.out.println("Cards List: " + cardsList);
+		logStep("Cards List: " + cardsList);
+		System.out.println("Total no of Feed Ad Cards counted are :" + feedAdCount);
+		logStep("Total no of Feed Ad Cards counted are :" + feedAdCount);
+		
+//		footerElementFound = TestBase.isElementDisplayed(byFooterCard);
+		
+		if (footerElementFound) {
+			System.out.println("Since footer element found on screen, can't move element to top");
+			if (desiredCardName.equalsIgnoreCase(firstCard) || desiredCardName.equalsIgnoreCase(secondCard) || desiredCardName.equalsIgnoreCase(thirdCard)) {
+				elementFound = true;
+			}
+		} else {
+			final Dimension dim1 = Ad.manage().window().getSize();
+			if (scrollToTop) {
+				System.out.println("Moving element to top");
+				moveElementToTop(ele, dim1, offsetY, tolerance);
+			}
+		}
+		
+		
+		if (elementFound == false) {
+			if (cardName.equalsIgnoreCase("Rain") && desiredCardName.equalsIgnoreCase("radar.largead")) {
+				System.out.println("Since Rain Card appears, Map Card will not be displayed, hence skipping the navigation and further validation");
+				logStep("Since Rain Card appears, Map Card will not be displayed, hence skipping the navigation and further validation");
+			} else {
+				System.out.println("Corresponding card: " + desiredCardName + " is not found, hence navigation is failed");
+				logStep("Corresponding card: " + desiredCardName + " is not found, hence navigation is failed");
+				Assert.fail("Corresponding card: " + desiredCardName + " is not found");
+			}
+			
+		}
+	}
+	
+	/**
+	 * Performs a touch action, using RELATIVE coordinates for destination, as
+	 * stated in TouchAction API.
+	 *
+	 * @param startX absolute X to start at
+	 * @param startY absolute Y to start at
+	 * @param moveX  relative X to move to
+	 * @param moveY  relative Y to move to
+	 */
+	public static void performScrollTouchAction(int startX, int startY, int moveX, int moveY) throws Exception {
+		System.out.println("Performing TouchAction starting from (" + startX + ", " + startY + ") and moving by ("
+				+ moveX + ", " + moveY + ")");
+		if (Ad instanceof IOSDriver<?>) {
+			if (startY - 88 > 625) {
+				startY = 625;
+				try {
+					new TouchAction<>((PerformsTouchActions) Ad)
+							.press(PointOption.point(startX, startY + genericVariance))
+							.waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2)))
+							.moveTo(PointOption.point(startX + moveX, startY + moveY))
+							.waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2))).release().perform();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					new TouchAction<>((PerformsTouchActions) Ad)
+							.press(PointOption.point(startX, startY + genericVariance))
+							.waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2)))
+							.moveTo(PointOption.point(startX + moveX, startY + moveY))
+							.waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2))).release().perform();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			// BaseTest.wait(1, true);
+			Thread.sleep(1000);
+		} else if (Ad instanceof AndroidDriver<?>) {
+			new TouchAction<>((PerformsTouchActions) Ad).press(PointOption.point(startX, startY))
+					.waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2)))
+					.moveTo(PointOption.point(startX + moveX, startY + moveY)).release().perform();
+		}
+
+	}
+	
+		
+	/**
+	 * Method to move element to the top of screen.
+	 * @param element Element
+	 * @param dim  Bounds
+	 * @param offsetY Padding to what is top
+	 * @throws java.lang.Exception 
+	 */
+	public static void moveElementToTop(final By locator, final Dimension dim, int offsetY, double tolerance) throws java.lang.Exception {
+		WebElement element =  Ad.findElement(locator);
+		Point loc = element.getLocation();
+		System.out.println("Element reported at " + loc + " before move to top");
+
+		int MAX_SCROLL_TRIES = 1;
+		if(offsetY > 0) {
+			MAX_SCROLL_TRIES = 10;
+		}
+
+		int tries = 0;
+		while(tries++ < MAX_SCROLL_TRIES && !isElementAtTop(dim, loc, offsetY, tolerance)) {
+			if(loc.y < offsetY) {
+				System.out.println("element has been scrolled past top");
+				if(Math.abs(offsetY - loc.y) < 200) { // to help not do mini scrolling
+					swipe(Direction.DOWN, 0.15);
+					loc = element.getLocation();
+				}
+			} else if(loc.y == offsetY) {
+				System.out.println("element exactly at threshold... maybe its cropped");
+				swipe(Direction.DOWN, 0.15);
+				loc = element.getLocation();
+			} else {
+				System.out.println("element needs to be scrolled up some more");
+				if(Math.abs(offsetY - loc.y) < 200) { // to help not do mini scrolling
+					swipe(Direction.UP, 0.15);
+					loc = element.getLocation();
+				}
+			}
+			performScrollTouchAction(1, loc.y, 0, offsetY - loc.y);
+			loc = element.getLocation();
+			System.out.println("Element reported at " + loc + " after move to top");
+
+		}
+		if(isElementAtTop(dim, loc, offsetY, tolerance)) {
+			System.out.println("Element at top of page");
+		}
+	}
+	
+	public static void moveElementToTop(final MobileElement element, final Dimension dim, int offsetY, double tolerance) throws java.lang.Exception {
+		Point loc = element.getLocation();
+		System.out.println("Element reported at " + loc + " before move to top");
+
+		int MAX_SCROLL_TRIES = 1;
+		if(offsetY > 0) {
+			MAX_SCROLL_TRIES = 10;
+		}
+
+		int tries = 0;
+		while(tries++ < MAX_SCROLL_TRIES && !isElementAtTop(dim, loc, offsetY, tolerance)) {
+			if(loc.y < offsetY) {
+				System.out.println("element has been scrolled past top");
+				if(Math.abs(offsetY - loc.y) < 200) { // to help not do mini scrolling
+					swipe(Direction.DOWN, 0.15);
+					loc = element.getLocation();
+				}
+			} else if(loc.y == offsetY) {
+				System.out.println("element exactly at threshold... maybe its cropped");
+				swipe(Direction.DOWN, 0.15);
+				loc = element.getLocation();
+			} else {
+				System.out.println("element needs to be scrolled up some more");
+				if(Math.abs(offsetY - loc.y) < 200) { // to help not do mini scrolling
+					swipe(Direction.UP, 0.15);
+					loc = element.getLocation();
+				}
+			}
+			performScrollTouchAction(1, loc.y, 0, offsetY - loc.y);
+			loc = element.getLocation();
+			System.out.println("Element reported at " + loc + " after move to top");
+
+		}
+		if(isElementAtTop(dim, loc, offsetY, tolerance)) {
+			System.out.println("Element at top of page");
+		}
+	}
+	
+	/**
+	 * Common generic method to perform scroll or swipe by given value.
+	 *
+	 * @param direction Direction to swipe
+	 * @param howMuch   a number between 0.0 to 1.0. for e.g. 0.5 denotes 50% swipe on
+	 *                  screen
+	 */
+	public static void swipe(final Direction direction, final double howMuch) throws java.lang.Exception {
+		try {
+			swipe(new Point(0, 0), Ad.manage().window().getSize(), direction, howMuch);
+		} catch (final WebDriverException e) {
+			System.out.println("Unable to perform swipe for the given params, direction : [" + direction.name() + "]");
+		}
+	}
+	
+	/**
+	 * Common generic method to perform scroll or swipe by given value.
+	 *
+	 * @param element   parent element to perform swipe/scroll within
+	 * @param direction Direction to swipe
+	 * @param howMuch   a number between 0.0 to 1.0. for e.g. 0.5 denotes 50% swipe on
+	 *                  screen
+	 * @throws java.lang.Exception 
+	 */
+	public static void swipe(final MobileElement element, final Direction direction, final double howMuch) throws java.lang.Exception {
+		swipe(element.getLocation(), element.getSize(), direction, howMuch);
+	}
+	
+	/**
+	 * Common generic method to perform scroll or swipe on a particular element or card by given value.
+	 *
+	 * @param direction Direction to swipe
+	 * @param howMuch   a number between 0.0 to 1.0. for e.g. 0.5 denotes 50% swipe on
+	 *                  screen
+	 */
+	public static void swipe(final By locator, final Direction direction, final double howMuch) throws java.lang.Exception {
+		try {
+			swipe(locator, new Point(0, 0),  direction, howMuch);
+		} catch (final WebDriverException e) {
+			System.out.println("Unable to perform swipe for the given params, direction : [" + direction.name() + "]");
+		}
+	}
+	
+	
+	/**
+	 * Common generic method to perform scroll or swipe by given value.
+	 *
+	 * @param originPoint Origin point for coordinates. Pass 0,0 for coordinates related
+	 *                    to screen.
+	 * @param dim         Element size / screen size
+	 * @param direction   Direction to swipe
+	 * @param howMuch     unit to swipe from (0 to 1)
+	 */
+	public static void swipe(Point originPoint, Dimension dim, final Direction direction, final double howMuch) throws java.lang.Exception {
+	//	System.out.println("Swiping " + direction + " by " + (howMuch * 100) + "%", true);
+		if((howMuch > 1) || (howMuch < 0)) {
+			throw new UnsupportedOperationException("Swipe unit :" + howMuch + " should be in between 0.0 to 1.0");
+		}
+
+		final Point bottomRight = new Point(originPoint.x + dim.width, originPoint.y + dim.height);
+		final Point centerPoint = new Point(originPoint.x + (dim.width / 2), originPoint.y + (dim.height / 2));
+		int startX = 0, startY = 0, moveX = 0, moveY = 0, offset = 0;
+		if((direction == Direction.LEFT) || (direction == Direction.RIGHT)) {
+			offset = (dim.width - (int)(dim.width * howMuch)) / 2;
+			moveY = 0;
+		} else if((direction == Direction.UP) || (direction == Direction.DOWN)) {
+			offset = (dim.height - (int)(dim.height * howMuch)) / 2;
+			moveX = 0;
+		}
+
+		switch (direction) {
+			case LEFT:
+				startX = bottomRight.x - offset;
+				startY = centerPoint.y;
+				moveX = (int)(dim.width * howMuch) * (-1);
+				break;
+			case RIGHT:
+				startX = originPoint.x + offset;
+				startY = centerPoint.y;
+				moveX = (int)(dim.width * howMuch);
+				break;
+			case UP:
+				startX = centerPoint.x;
+				startY = (bottomRight.y - offset);
+				moveY = (int)(dim.height * howMuch) * (-1);
+				break;
+			case DOWN:
+				startX = centerPoint.x;
+				startY = originPoint.y + offset;
+				moveY = (int)(dim.height * howMuch);
+				break;
+			default:
+				System.out.println("Invalid swipe direction: " + direction);
+				break;
+		}
+
+		performScrollTouchAction(startX, startY, moveX, moveY);
+		System.out.println("Swipe complete");
+	}
+	
+	/**
+	 * Common generic method to perform scroll or swipe by given locator.
+	 *
+	 * @param originPoint Origin point for coordinates. Pass 0,0 for coordinates related
+	 *                    to screen.
+	 * @param dim         Element size / screen size
+	 * @param direction   Direction to swipe
+	 * @param howMuch     unit to swipe from (0 to 1)
+	 */
+	public static void swipe(final By locator, Point originPoint, final Direction direction, final double howMuch) throws java.lang.Exception {
+		//	System.out.println("Swiping " + direction + " by " + (howMuch * 100) + "%", true);
+		WebElement element =  Ad.findElement(locator);
+		Point loc = element.getLocation();
+		Dimension dim = element.getSize();
+		System.out.println("Element reported at " + loc + " before move to top");
+			if((howMuch > 1) || (howMuch < 0)) {
+				throw new UnsupportedOperationException("Swipe unit :" + howMuch + " should be in between 0.0 to 1.0");
+			}
+
+			final Point bottomRight = new Point(originPoint.x + dim.width, originPoint.y + dim.height+loc.y);
+			final Point centerPoint = new Point(originPoint.x + (dim.width / 2), originPoint.y + (dim.height / 2)+loc.y);
+			int startX = 0, startY = 0, moveX = 0, moveY = 0, offset = 0;
+			if((direction == Direction.LEFT) || (direction == Direction.RIGHT)) {
+				offset = (dim.width - (int)(dim.width * howMuch)) / 2;
+				moveY = 0;
+			} else if((direction == Direction.UP) || (direction == Direction.DOWN)) {
+				offset = (dim.height - (int)(dim.height * howMuch)) / 2;
+				moveX = 0;
+			}
+
+			switch (direction) {
+				case LEFT:
+					startX = bottomRight.x - offset;
+					startY = centerPoint.y;
+					moveX = (int)(dim.width * howMuch) * (-1);
+					break;
+				case RIGHT:
+					startX = originPoint.x + offset;
+					startY = centerPoint.y;
+					moveX = (int)(dim.width * howMuch);
+					break;
+				case UP:
+					startX = centerPoint.x;
+					startY = (bottomRight.y - offset);
+					moveY = (int)(dim.height * howMuch) * (-1);
+					break;
+				case DOWN:
+					startX = centerPoint.x;
+					startY = originPoint.y + offset;
+					moveY = (int)(dim.height * howMuch);
+					break;
+				default:
+					System.out.println("Invalid swipe direction: " + direction);
+					break;
+			}
+
+			performScrollTouchAction(startX, startY, moveX, moveY);
+			System.out.println("Swipe complete");
+		}
+	/**
+	 * Enum for different swipe directions
+	 */
+	public static enum Direction {
+		LEFT,
+		RIGHT,
+		UP,
+		DOWN;
+	}
+	
+	/**
+	 * Method to check the element is present at top of the screen.
+	 * Said element to be at top when it is within 5% of dimension.
+	 *
+	 * @param dim Bounds
+	 * @param loc Element's location
+	 * @param offsetY Add padding to what is top
+	 * @return true if element is within 5% of top
+	 */
+	public static boolean isElementAtTop(final Dimension dim, final Point loc, int offsetY, double tolerance) {
+		if(loc.y > offsetY && loc.y <= (offsetY + dim.height * tolerance)) {
+			System.out.println("Element at top of page");
+			return true;
+		} else {
+			System.out.println("Element not at top of page");
+			return false;
+		}
+	}
+	
+	
+	/**
+	 * Print Last Three Card Names of TWC iOS App when Scrolling ends.
+	 */
+	public static void getLastThreeCardsNames() {
+		By byele = MobileBy.xpath("//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell[1]");
+		MobileElement ele = Ad.findElement(byele);
+		String cardName = "homescreen";
+		try {
+			cardName = ele
+					.findElement(By.xpath("//XCUIElementTypeOther[@name='nextgen-integrated-marquee-card-containerView']"))
+					.getAttribute("name");
+		} catch (Exception e) {
+			try {
+				cardName = ele
+						.findElement(By.xpath("//XCUIElementTypeOther/XCUIElementTypeStaticText"))
+						.getAttribute("name");
+			} catch (Exception e1) {
+				try {
+					// some times when big advertisement displayed, it doenst have name as
+					// 'Advertisement' hence below implemented
+					cardName = ele
+							.findElement(By.xpath("//XCUIElementTypeOther[@name='ads-card-containerView']"))
+							.getAttribute("name");
+					
+				} catch (Exception e2) {
+					try {
+						// when Integrated Feed card is displayed, it doenst have name as
+						// 'Advertisement' hence below implemented
+						cardName = ele
+								.findElement(By.xpath(
+										"//XCUIElementTypeOther[@name='integrated-ad-card-containerView']"))
+								.getAttribute("name");
+						
+
+					}catch (Exception e3) {
+						cardName = ele.findElement(By.xpath("(//XCUIElementTypeOther)[3]"))
+								.getAttribute("name");
+					}
+				}
+				
+			}
+		}
+		firstCard = cardName;
+		System.out.println("1st  Card is : " + cardName);
+		logStep("1st  Card is : " + cardName);
+		
+		byele = MobileBy.xpath("//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell[2]");
+		ele = Ad.findElement(byele);
+		try {
+			cardName = ele
+					.findElement(By.xpath("//XCUIElementTypeOther[@name='nextgen-integrated-marquee-card-containerView']"))
+					.getAttribute("name");
+		} catch (Exception e) {
+			try {
+				cardName = ele
+						.findElement(By.xpath("//XCUIElementTypeOther/XCUIElementTypeStaticText"))
+						.getAttribute("name");
+			} catch (Exception e1) {
+				try {
+					// some times when big advertisement displayed, it doenst have name as
+					// 'Advertisement' hence below implemented
+					cardName = ele
+							.findElement(By.xpath("//XCUIElementTypeOther[@name='ads-card-containerView']"))
+							.getAttribute("name");
+					
+				} catch (Exception e2) {
+					try {
+						// when Integrated Feed card is displayed, it doenst have name as
+						// 'Advertisement' hence below implemented
+						cardName = ele
+								.findElement(By.xpath(
+										"//XCUIElementTypeOther[@name='integrated-ad-card-containerView']"))
+								.getAttribute("name");
+						
+
+					}catch (Exception e3) {
+						cardName = ele.findElement(By.xpath("(//XCUIElementTypeOther)[3]"))
+								.getAttribute("name");
+					}
+				}
+				
+			}
+		}
+		secondCard = cardName;
+		System.out.println("2nd  Card is : " + cardName);
+		logStep("2nd  Card is : " + cardName);
+		
+		byele = MobileBy.xpath("//XCUIElementTypeCollectionView[@y='0']/XCUIElementTypeCell[3]");
+		ele = Ad.findElement(byele);
+		try {
+			cardName = ele
+					.findElement(By.xpath("//XCUIElementTypeOther[@name='nextgen-integrated-marquee-card-containerView']"))
+					.getAttribute("name");
+		} catch (Exception e) {
+			try {
+				cardName = ele
+						.findElement(By.xpath("//XCUIElementTypeOther/XCUIElementTypeStaticText"))
+						.getAttribute("name");
+			} catch (Exception e1) {
+				try {
+					// some times when big advertisement displayed, it doenst have name as
+					// 'Advertisement' hence below implemented
+					cardName = ele
+							.findElement(By.xpath("//XCUIElementTypeOther[@name='ads-card-containerView']"))
+							.getAttribute("name");
+					
+				} catch (Exception e2) {
+					try {
+						// when Integrated Feed card is displayed, it doenst have name as
+						// 'Advertisement' hence below implemented
+						cardName = ele
+								.findElement(By.xpath(
+										"//XCUIElementTypeOther[@name='integrated-ad-card-containerView']"))
+								.getAttribute("name");
+						
+
+					}catch (Exception e3) {
+						cardName = ele.findElement(By.xpath("(//XCUIElementTypeOther)[3]"))
+								.getAttribute("name");
+					}
+				}
+				
+			}
+		}
+		thirdCard = cardName;
+		System.out.println("3rd  Card is : " + cardName);
+		logStep("3rd  Card is : " + cardName);
+	}
+	
 
 }

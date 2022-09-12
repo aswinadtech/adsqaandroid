@@ -23,7 +23,9 @@ import com.twc.ios.app.general.TestBase;
 import com.twc.ios.app.general.TwcIosBaseTest;
 import com.twc.ios.app.general.Utils;
 import com.twc.ios.app.pages.AddressScreen;
+import com.twc.ios.app.pages.AirQualityCardScreen;
 import com.twc.ios.app.pages.DailyNavTab;
+import com.twc.ios.app.pages.FTLScreens;
 import com.twc.ios.app.pages.HomeNavTab;
 import com.twc.ios.app.pages.HourlyNavTab;
 import com.twc.ios.app.pages.LogInScreen;
@@ -50,6 +52,8 @@ public class SmokeTest extends TwcIosBaseTest {
 	SeasonalHubCardScreen sScreen;
 	SettingsScreen stScreen;
 	LogInScreen loginScreen;
+	FTLScreens ftlScreens;
+	AirQualityCardScreen aqCardScreen;
 	
 	@BeforeClass(alwaysRun = true)
 	@Description("BeforeClass")
@@ -136,9 +140,21 @@ public class SmokeTest extends TwcIosBaseTest {
 		sScreen = new SeasonalHubCardScreen(Ad);
 		stScreen = new SettingsScreen(Ad);
 		loginScreen = new LogInScreen(Ad);
-				
+		ftlScreens = new FTLScreens(Ad);
+		aqCardScreen = new AirQualityCardScreen(Ad);
+		
 	}
 	
+	@Test(priority = 51, enabled = true)
+	@Description("Verify Consent Calls On FTL")
+	public void Verify_Consent_Calls_On_FTL() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("===========================Consent Calls Verification On FTL====================");
+		
+		System.out.println("****** Consent Calls Verification On FTL Started");
+		logStep("****** Consent Calls Verification On FTL Started");
+		ftlScreens.verifyNoOfConsentCallsOnFTL();
+	}
 	
 	/**
 	 * Verify Feed Calls
@@ -156,6 +172,7 @@ public class SmokeTest extends TwcIosBaseTest {
 		TestBase.waitForMilliSeconds(5000);
 		stScreen.select_Airlock_Branch("IOSAUTOMATION02");
 		stScreen.select_Airlock_UserGroup("IOSAUTOMATION");
+		proxy.clearCharlesSession();
 		Functions.close_launchApp();
 		
 		/*
@@ -163,10 +180,11 @@ public class SmokeTest extends TwcIosBaseTest {
 		 */
 		
 		//Utils.verifytinterstitialAdcallBeforeClearSession("Smoke", "Hourly");
+
 		hrTab.navigateToHourlyTabAndHandleInterstitialAd();
 		Functions.close_launchApp();
-		
 		proxy.clearCharlesSession();
+		
 		addrScreen.enternewAddress(false, "Atlanta, Georgia");
 		TestBase.waitForMilliSeconds(20000);
 		try {
@@ -279,6 +297,19 @@ public class SmokeTest extends TwcIosBaseTest {
 
 	}
 
+	@Test(priority = 107, enabled = true)
+	@Description("Verify Health & Activities (Flu) Content page iu")
+	public void Verify_Health_Flu_ContentPage_AdCall() throws Exception {
+		System.out.println("==============================================");
+		System.out.println(
+				"===========================Health & Activities (Flu) Content page Adcal iu====================");
+
+		System.out.println("****** Health & Activities (Flu) Content page Ad cal iu validation Started");
+		logStep("****** Health & Activities (Flu) Content page Ad cal iu validation Started");
+		Utils.verifyPubadCal("Smoke", "Health(coldAndFlu)");
+
+	}
+	
 	@Test(priority = 108, enabled = true)
 	@Description("Verify Health & Activities (Allergy) Content page iu")
 	public void Verify_Health_Allergy_ContentPage_AdCall() throws Exception {
@@ -302,6 +333,19 @@ public class SmokeTest extends TwcIosBaseTest {
 		System.out.println("****** Health & Activities (Running) Content page Ad cal iu validation Started");
 		logStep("****** Health & Activities (Running) Content page Ad cal iu validation Started");
 		Utils.verifyPubadCal("Smoke", "Health(goRun)", false);
+
+	}
+	
+	@Test(priority = 110, enabled = true)
+	@Description("Verify Health & Activities (Boat & Beach) Content iu")
+	public void Verify_Health_BoatAndBeach_ContentPage_AdCall() throws Exception {
+		System.out.println("==============================================");
+		System.out.println(
+				"===========================Health & Activities (Boat & Beach) Content page Adcal iu====================");
+
+		System.out.println("****** Health & Activities (Boat & Beach) Content page Ad cal iu validation Started");
+		logStep("****** Health & Activities (Boat & Beach) Content page Ad cal iu validation Started");
+		Utils.verifyPubadCal("Smoke", "Health(boatAndBeach)", false);
 
 	}
 
@@ -1214,11 +1258,24 @@ public class SmokeTest extends TwcIosBaseTest {
 		Utils.validate_custom_param_val_of_gampad("Smoke", "Marquee", "ltv", "NotNull");
 
 	}
+	
+	/**
+	 * This method validates ltv custom parameter of Homescreen Adhesive call
+	 */
+	@Test(priority = 271, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Homescreen Adhesive call ")
+	public void Validate_Homescreen_Adhesive_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Homescreen Adhesive call");
+		logStep("Validating ltv custom parameter of Homescreen Adhesive call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Pulltorefresh", "ltv", "NotNull");
+
+	}
 
 	/**
 	 * This method validates ltv custom parameter of Feed1 call
 	 */
-	@Test(priority = 271, enabled = true)
+	@Test(priority = 272, enabled = true)
 	@Description("Validating 'ltv' custom parameter of Feed1 call ")
 	public void Validate_Feed1_ltv_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1227,7 +1284,8 @@ public class SmokeTest extends TwcIosBaseTest {
 		Utils.validate_custom_param_val_of_gampad("Smoke", "Feed1", "ltv", "NotNull");
 
 	}
-
+	
+	
 	/**
 	 * This method validates ltv custom parameter of Hourly details call
 	 */
@@ -1240,11 +1298,128 @@ public class SmokeTest extends TwcIosBaseTest {
 		Utils.validate_custom_param_val_of_gampad("Smoke", "Hourly", "ltv", "NotNull");
 
 	}*/
+	
+	/**
+	 * This method validates ltv custom parameter of Health(allergy) ContentPage call
+	 */
+	@Test(priority = 273, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Health(allergy) ContentPage call ")
+	public void Validate_Health_Allergy_ContentPage_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Health(allergy) ContentPage call");
+		logStep("Validating ltv custom parameter of Health(allergy) ContentPage call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Health(allergy)", "ltv", "NotNull");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Health(allergy) Spotlight call
+	 */
+	@Test(priority = 274, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Health(allergy) Spotlight call ")
+	public void Validate_Health_Allergy_Spotlight_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Health(allergy) Spotlight call");
+		logStep("Validating ltv custom parameter of Health(allergy) Spotlight call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Health(allergySpotLight)", "ltv", "NotNull");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Health(allergy) Articles call
+	 */
+	@Test(priority = 275, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Health(allergy) Articles call ")
+	public void Validate_Health_Allergy_Articles_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Health(allergy) Articles call");
+		logStep("Validating ltv custom parameter of Health(allergy) Articles call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Health(allergyArticles)", "ltv", "NotNull");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Health(coldAndFlu) ContentPage call
+	 */
+	@Test(priority = 276, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Health(coldAndFlu)) ContentPage call ")
+	public void Validate_Health_Flu_ContentPage_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Health(coldAndFlu) ContentPage call");
+		logStep("Validating ltv custom parameter of Health(coldAndFlu) ContentPage call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Health(coldAndFlu)", "ltv", "NotNull");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Health(coldAndFlu) Articles call
+	 */
+	@Test(priority = 277, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Health(coldAndFlu) Articles call ")
+	public void Validate_Health_Flu_Articles_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Health(coldAndFlu) Articles call");
+		logStep("Validating ltv custom parameter of Health(coldAndFlu) Articles call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Health(coldAndFluArticles)", "ltv", "NotNull");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Map Details call
+	 */
+	@Test(priority = 278, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Map Details call ")
+	public void Validate_MapDetails_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Map Details call");
+		logStep("Validating ltv custom parameter of Map Details call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Map", "ltv", "NotNull");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of AirQuality Details call
+	 */
+	@Test(priority = 279, enabled = true)
+	@Description("Validating 'ltv' custom parameter of AirQuality Details call ")
+	public void Validate_AirQuality_Details_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of AirQuality Details call");
+		logStep("Validating ltv custom parameter of AirQuality Details call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Air Quality(Content)", "ltv", "NotNull");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Alert Center call
+	 */
+	@Test(priority = 280, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Alert Center call ")
+	public void Validate_Alert_Center_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Alert Center call");
+		logStep("Validating ltv custom parameter of Alert Center call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "MyAlerts", "ltv", "NotNull");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of SafetyAndPreparedness call
+	 */
+	@Test(priority = 281, enabled = true)
+	@Description("Validating 'ltv' custom parameter of SafetyAndPreparedness call ")
+	public void Validate_SafetyAndPreparedness_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of SafetyAndPreparedness call");
+		logStep("Validating ltv custom parameter of SafetyAndPreparedness call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "SafetyAndPreparedness", "ltv", "NotNull");
+
+	}
 
 	/**
 	 * This method validates fhic custom parameter of Marquee call for non-existence
 	 */
-	@Test(priority = 273, enabled = true)
+	@Test(priority = 283, enabled = true)
 	@Description("Validating 'fhic' custom parameter of Marquee call ")
 	public void Validate_Marquee_fhic_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1257,7 +1432,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates fhic custom parameter of Feed1 call for non-existence
 	 */
-	@Test(priority = 274, enabled = true)
+	@Test(priority = 284, enabled = true)
 	@Description("Validating 'fhic' custom parameter of Feed1 call ")
 	public void Validate_Feed1_fhic_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1271,7 +1446,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates fhic custom parameter of Hourly details call for
 	 * non-existence
 	 */
-	/*@Test(priority = 275, enabled = true)
+	/*@Test(priority = 285, enabled = true)
 	@Description("Validating 'fhic' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_fhic_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1284,7 +1459,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates floc custom parameter of Marquee call for non-existence
 	 */
-	@Test(priority = 276, enabled = true)
+	@Test(priority = 286, enabled = true)
 	@Description("Validating 'floc' custom parameter of Marquee call ")
 	public void Validate_Marquee_floc_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1297,7 +1472,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates floc custom parameter of Feed1 call for non-existence
 	 */
-	@Test(priority = 277, enabled = true)
+	@Test(priority = 287, enabled = true)
 	@Description("Validating 'floc' custom parameter of Feed1 call ")
 	public void Validate_Feed1_floc_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1311,7 +1486,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates floc custom parameter of Hourly details call for
 	 * non-existence
 	 */
-	/*@Test(priority = 278, enabled = true)
+	/*@Test(priority = 288, enabled = true)
 	@Description("Validating 'floc' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_floc_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1325,7 +1500,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates fltmpc custom parameter of Marquee call for
 	 * non-existence
 	 */
-	@Test(priority = 279, enabled = true)
+	@Test(priority = 289, enabled = true)
 	@Description("Validating 'fltmpc' custom parameter of Marquee call ")
 	public void Validate_Marquee_fltmpc_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1338,7 +1513,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates fltmpc custom parameter of Feed1 call for non-existence
 	 */
-	@Test(priority = 280, enabled = true)
+	@Test(priority = 290, enabled = true)
 	@Description("Validating 'fltmpc' custom parameter of Feed1 call ")
 	public void Validate_Feed1_fltmpc_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1352,7 +1527,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates fltmpc custom parameter of Hourly details call for
 	 * non-existence
 	 */
-	/*@Test(priority = 281, enabled = true)
+	/*@Test(priority = 291, enabled = true)
 	@Description("Validating 'fltmpc' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_fltmpc_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1365,7 +1540,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates ftl custom parameter of Marquee call for non-existence
 	 */
-	@Test(priority = 282, enabled = true)
+	@Test(priority = 292, enabled = true)
 	@Description("Validating 'ftl' custom parameter of Marquee call ")
 	public void Validate_Marquee_ftl_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1378,7 +1553,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates ftl custom parameter of Feed1 call for non-existence
 	 */
-	@Test(priority = 283, enabled = true)
+	@Test(priority = 293, enabled = true)
 	@Description("Validating 'ftl' custom parameter of Feed1 call ")
 	public void Validate_Feed1_ftl_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1392,7 +1567,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates ftl custom parameter of Hourly details call for
 	 * non-existence
 	 */
-	/*@Test(priority = 284, enabled = true)
+	/*@Test(priority = 294, enabled = true)
 	@Description("Validating 'ftl' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_ftl_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1405,7 +1580,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates h2o custom parameter of Marquee call for non-existence
 	 */
-	@Test(priority = 285, enabled = true)
+	@Test(priority = 295, enabled = true)
 	@Description("Validating 'h2o' custom parameter of Marquee call ")
 	public void Validate_Marquee_h2o_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1418,7 +1593,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates h2o custom parameter of Feed1 call for non-existence
 	 */
-	@Test(priority = 286, enabled = true)
+	@Test(priority = 296, enabled = true)
 	@Description("Validating 'h2o' custom parameter of Feed1 call ")
 	public void Validate_Feed1_h2o_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1432,7 +1607,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates h2o custom parameter of Hourly details call for
 	 * non-existence
 	 */
-	/*@Test(priority = 287, enabled = true)
+	/*@Test(priority = 297, enabled = true)
 	@Description("Validating 'h2o' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_h2o_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1445,7 +1620,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates hmid custom parameter of Marquee call for non-existence
 	 */
-	@Test(priority = 288, enabled = true)
+	@Test(priority = 298, enabled = true)
 	@Description("Validating 'hmid' custom parameter of Marquee call ")
 	public void Validate_Marquee_hmid_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1458,7 +1633,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates hmid custom parameter of Feed1 call for non-existence
 	 */
-	@Test(priority = 289, enabled = true)
+	@Test(priority = 299, enabled = true)
 	@Description("Validating 'hmid' custom parameter of Feed1 call ")
 	public void Validate_Feed1_hmid_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1472,7 +1647,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates hmid custom parameter of Hourly details call for
 	 * non-existence
 	 */
-	/*@Test(priority = 290, enabled = true)
+	/*@Test(priority = 300, enabled = true)
 	@Description("Validating 'hmid' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_hmid_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1486,7 +1661,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates layer custom parameter of Marquee call for
 	 * non-existence
 	 */
-	@Test(priority = 291, enabled = true)
+	@Test(priority = 301, enabled = true)
 	@Description("Validating 'layer' custom parameter of Marquee call ")
 	public void Validate_Marquee_layer_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1499,7 +1674,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates layer custom parameter of Feed1 call for non-existence
 	 */
-	@Test(priority = 292, enabled = true)
+	@Test(priority = 302, enabled = true)
 	@Description("Validating 'layer' custom parameter of Feed1 call ")
 	public void Validate_Feed1_layer_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1513,7 +1688,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates layer custom parameter of Hourly details call for
 	 * non-existence
 	 */
-	/*@Test(priority = 293, enabled = true)
+	/*@Test(priority = 303, enabled = true)
 	@Description("Validating 'layer' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_layer_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1526,7 +1701,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates uv custom parameter of Marquee call for non-existence
 	 */
-	@Test(priority = 294, enabled = true)
+	@Test(priority = 304, enabled = true)
 	@Description("Validating 'uv' custom parameter of Marquee call ")
 	public void Validate_Marquee_uv_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1539,7 +1714,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates uv custom parameter of Feed1 call for non-existence
 	 */
-	@Test(priority = 295, enabled = true)
+	@Test(priority = 305, enabled = true)
 	@Description("Validating 'uv' custom parameter of Feed1 call ")
 	public void Validate_Feed1_uv_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1553,7 +1728,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates uv custom parameter of Hourly details call for
 	 * non-existence
 	 */
-	/*@Test(priority = 296, enabled = true)
+	/*@Test(priority = 306, enabled = true)
 	@Description("Validating 'uv' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_uv_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1566,7 +1741,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates wind custom parameter of Marquee call for non-existence
 	 */
-	@Test(priority = 297, enabled = true)
+	@Test(priority = 307, enabled = true)
 	@Description("Validating 'wind' custom parameter of Marquee call ")
 	public void Validate_Marquee_wind_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1579,7 +1754,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates wind custom parameter of Feed1 call for non-existence
 	 */
-	@Test(priority = 298, enabled = true)
+	@Test(priority = 308, enabled = true)
 	@Description("Validating 'wind' custom parameter of Feed1 call ")
 	public void Validate_Feed1_wind_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1593,7 +1768,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates wind custom parameter of Hourly details call for
 	 * non-existence
 	 */
-	/*@Test(priority = 299, enabled = true)
+	/*@Test(priority = 309, enabled = true)
 	@Description("Validating 'wind' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_wind_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1606,7 +1781,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates mr custom parameter of Marquee Call
 	 */
-	@Test(priority = 300, enabled = true)
+	@Test(priority = 310, enabled = true)
 	@Description("Validating 'mr' custom parameter of Marquee Call")
 	public void validate_Marquee_mr_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1619,7 +1794,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates mr custom parameter of Feed1 call
 	 */
-	@Test(priority = 301, enabled = true)
+	@Test(priority = 311, enabled = true)
 	@Description("Validating 'mr' custom parameter of Feed1 call ")
 	public void Validate_Feed1_mr_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1632,7 +1807,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates mr custom parameter of Sticky ad Call
 	 */
-	@Test(priority = 302, enabled = true)
+	@Test(priority = 312, enabled = true)
 	@Description("Validating 'mr' custom parameter of Sticky ad Call")
 	public void validate_Sticky_Ad_mr_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1644,7 +1819,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates mr custom parameter of Hourly details call
 	 */
-	/*@Test(priority = 302, enabled = true)
+	/*@Test(priority = 313, enabled = true)
 	@Description("Validating 'mr' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_mr_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1657,7 +1832,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates dnt custom parameter of Marquee call
 	 */
-	@Test(priority = 303, enabled = true)
+	@Test(priority = 314, enabled = true)
 	@Description("Validating 'dnt' custom parameter of Marquee call ")
 	public void Validate_Marquee_dnt_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1670,7 +1845,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates dnt custom parameter of Feed1 call
 	 */
-	@Test(priority = 304, enabled = true)
+	@Test(priority = 315, enabled = true)
 	@Description("Validating 'dnt' custom parameter of Feed1 call ")
 	public void Validate_Feed1_dnt_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1683,7 +1858,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates dnt custom parameter of Hourly details call
 	 */
-	/*@Test(priority = 305, enabled = true)
+	/*@Test(priority = 316, enabled = true)
 	@Description("Validating 'dnt' custom parameter of Hourly details call ")
 	public void Validate_HourlyDetails_dnt_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1696,7 +1871,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates attmas parameter of Marquee call when tracking enabled
 	 */
-	@Test(priority = 310, enabled = true)
+	@Test(priority = 317, enabled = true)
 	@Description("Validating 'attmas' parameter of Marquee call when tracking enabled")
 	public void Validate_Marquee_call_attmas_param_when_tracking_enabled() throws Exception {
 		System.out.println("==============================================");
@@ -1709,7 +1884,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates attmas parameter of Feed1 call when tracking enabled
 	 */
-	@Test(priority = 311, enabled = true)
+	@Test(priority = 318, enabled = true)
 	@Description("Validating 'attmas' parameter of Feed1 call when tracking enabled")
 	public void Validate_Feed1_call_attmas_param_when_tracking_enabled() throws Exception {
 		System.out.println("==============================================");
@@ -1719,7 +1894,7 @@ public class SmokeTest extends TwcIosBaseTest {
 
 	}
 	
-	@Test(priority = 314, enabled = true)
+	@Test(priority = 320, enabled = true)
 	@Description("Verify Allergy Details Spot Light ad call iu")
 	public void Verify_AllergyDetails_Spotlight_AdCall() throws Exception {
 		System.out.println("==============================================");
@@ -1731,7 +1906,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates pos custom parameter of Week Ahead call
 	 */
-	@Test(priority = 315, enabled = true)
+	@Test(priority = 321, enabled = true)
 	@Description("Validating 'pos' custom parameter of Allergy Details Spot Light call ")
 	public void Validate_AllergyDetails_Spotlight_pos_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -1741,7 +1916,7 @@ public class SmokeTest extends TwcIosBaseTest {
 
 	}
 
-	@Test(priority = 316, enabled = true)
+	@Test(priority = 322, enabled = true)
 	@Description("Validating Allergy Details Spot Light call Ad sz parameter")
 	public void Validate_AllergyDetails_Spotlight_Ad_Size() throws Exception {
 		System.out.println("==============================================");
@@ -1754,7 +1929,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Marquee Call
 	 */
-	/*@Test(priority = 317, enabled = true)
+	/*@Test(priority = 325, enabled = true)
 	@Description("Validating 'content_url' parameter of Marquee Call")
 	public void validate_Marquee_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1766,7 +1941,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Sticky ad Call
 	 */
-	@Test(priority = 318, enabled = true)
+	@Test(priority = 326, enabled = true)
 	@Description("Validating 'content_url' parameter of Sticky ad Call")
 	public void validate_Sticky_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1778,7 +1953,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Feed1 ad Call
 	 */
-	@Test(priority = 319, enabled = true)
+	@Test(priority = 327, enabled = true)
 	@Description("Validating 'content_url' parameter of Feed1 ad Call")
 	public void validate_Feed1_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1790,7 +1965,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Daily Details ad Call
 	 */
-	@Test(priority = 320, enabled = true)
+	@Test(priority = 328, enabled = true)
 	@Description("Validating 'content_url' parameter of Daily Details ad Call")
 	public void validate_Daily_Details_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1802,7 +1977,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Map Details ad Call
 	 */
-	@Test(priority = 321, enabled = true)
+	@Test(priority = 329, enabled = true)
 	@Description("Validating 'content_url' parameter of Map Details ad Call")
 	public void validate_Map_Details_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1814,7 +1989,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Covid ad Call
 	 */
-	/*@Test(priority = 322, enabled = true)
+	/*@Test(priority = 330, enabled = true)
 	@Description("Validating 'content_url' parameter of Covid ad Call")
 	public void validate_Covid_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1826,7 +2001,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of AQ Details ad Call
 	 */
-	/*@Test(priority = 323, enabled = true)
+	/*@Test(priority = 331, enabled = true)
 	@Description("Validating 'content_url' parameter of AQ Details ad Call")
 	public void validate_AQ_Details_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1838,7 +2013,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Alert Center ad Call
 	 */
-	/*@Test(priority = 324, enabled = true)
+	/*@Test(priority = 332, enabled = true)
 	@Description("Validating 'content_url' parameter of Alert Center ad Call")
 	public void validate_Alert_Center_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1850,7 +2025,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Health Allergy ad Call
 	 */
-	/*@Test(priority = 325, enabled = true)
+	/*@Test(priority = 333, enabled = true)
 	@Description("Validating 'content_url' parameter of Health Allergy ad Call")
 	public void validate_Health_Allergy_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1862,7 +2037,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Health Allergy Articles ad Call
 	 */
-	/*@Test(priority = 326, enabled = true)
+	/*@Test(priority = 334, enabled = true)
 	@Description("Validating 'content_url' parameter of Health Allergy Articles ad Call")
 	public void validate_Health_Allergy_Articles_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1874,7 +2049,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Allergy Details Spotlight ad Call
 	 */
-	/*@Test(priority = 327, enabled = true)
+	/*@Test(priority = 335, enabled = true)
 	@Description("Validating 'content_url' parameter of Allergy Details Spotlight ad Call")
 	public void validate_Allergy_Details_Spotlight_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1886,7 +2061,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Health Flu ad Call
 	 */
-	/*@Test(priority = 328, enabled = true)
+	/*@Test(priority = 336, enabled = true)
 	@Description("Validating 'content_url' parameter of Health Flu ad Call")
 	public void validate_Health_Flu_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1898,7 +2073,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Health Flu Articles ad Call
 	 */
-	/*@Test(priority = 329, enabled = true)
+	/*@Test(priority = 337, enabled = true)
 	@Description("Validating 'content_url' parameter of Health Flu Articles ad Call")
 	public void validate_Health_Flu_Articles_Ad_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1912,7 +2087,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * below method alone, Utils.get_v3_wx_forecast_daily_15day_data() to be
 	 * executed as a prerequisite script
 	 */
-	@Test(priority = 330, enabled = true)
+	@Test(priority = 450, enabled = true)
 	@Description("Verify Daily Details Ad Units")
 	public void Verify_Daily_Details_AdUnits() throws Exception {
 	System.out.println("==============================================");
@@ -1929,10 +2104,23 @@ public class SmokeTest extends TwcIosBaseTest {
 	}
 	
 	/**
+	 * This method validates ltv custom parameter of Daily Details call
+	 */
+	@Test(priority = 451, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Daily Details call ")
+	public void Validate_Daily_Details_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Daily Details call");
+		logStep("Validating ltv custom parameter of Daily Details call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Daily(10day)", "ltv", "NotNull");
+
+	}
+	
+	/**
 	 * This method validate the 'mr' custom parameter of Hourly Details
 	 * @throws Exception
 	 */
-	/*@Test(priority = 331, enabled = true)
+	/*@Test(priority = 475, enabled = true)
 	@Description("Verify 'mr' custom parameter of Hourly Details")
 	public void Verify_Hourly_Details_mr_Custom_Parameter() throws Exception {
 		System.out.println("==============================================");
@@ -1965,7 +2153,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This Script Enable preconfiguration for denying tracking of apps at device level
 	 * @throws Exception    
 	 */
-	@Test(priority = 335, enabled = true)
+	@Test(priority = 480, enabled = true)
 	@Description("Enabling Preconfiguration for denying tracking of apps at device level")
 	public void enable_PreConfiguration_for_denying_tracking_at_device_level() throws Exception {
 		System.out.println("==============================================");
@@ -1981,7 +2169,7 @@ public class SmokeTest extends TwcIosBaseTest {
 		Functions.close_launchApp();
 				
 		try {
-			Utils.navigateTofeedCard("weather.feed0");
+			Utils.navigateTofeedCard("weather.feed0", false, false);
 					
 		} catch (Exception e) {
 			System.out.println("There is an exception while navigting to feed1 card");
@@ -1995,7 +2183,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates dnt custom parameter of Marquee call when tracking denied
 	 */
-	@Test(priority = 336, enabled = true)
+	@Test(priority = 481, enabled = true)
 	@Description("Validating 'dnt' custom parameter of Marquee call when tracking denied")
 	public void Validate_Marquee_dnt_Custom_param_when_tracking_denied() throws Exception {
 		System.out.println("==============================================");
@@ -2008,7 +2196,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates dnt custom parameter of Feed1 call  when tracking denied
 	 */
-	@Test(priority = 337, enabled = true)
+	@Test(priority = 482, enabled = true)
 	@Description("Validating 'dnt' custom parameter of Feed1 call when tracking denied")
 	public void Validate_Feed1_dnt_Custom_param_when_tracking_denied() throws Exception {
 		System.out.println("==============================================");
@@ -2021,7 +2209,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates attmas parameter of Marquee call when tracking denied
 	 */
-	@Test(priority = 338, enabled = true)
+	@Test(priority = 483, enabled = true)
 	@Description("Validating 'attmas' parameter of Marquee call when tracking denied")
 	public void Validate_Marquee_call_attmas_param_when_tracking_denied() throws Exception {
 		System.out.println("==============================================");
@@ -2034,7 +2222,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates attmas parameter of Feed1 call when tracking denied
 	 */
-	@Test(priority = 339, enabled = true)
+	@Test(priority = 484, enabled = true)
 	@Description("Validating 'attmas' parameter of Feed1 call when tracking denied")
 	public void Validate_Feed1_call_attmas_param_when_tracking_denied() throws Exception {
 		System.out.println("==============================================");
@@ -2048,7 +2236,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This Script Enables tracking of apps at device level post validation of denying app tracking
 	 * @throws Exception    
 	 */
-	@Test(priority = 340, enabled = true)
+	@Test(priority = 485, enabled = true)
 	@Description("Enabling tracking of apps at device level")
 	public void enable_tracking_at_device_level() throws Exception {
 		System.out.println("==============================================");
@@ -2064,7 +2252,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validate the 'mr' custom parameter of Map Details
 	 * @throws Exception
 	 */
-	@Test(priority = 345, enabled = true)
+	@Test(priority = 500, enabled = true)
 	@Description("Verify 'mr' custom parameter of Map Details")
 	public void Verify_Map_Details_mr_Custom_Parameter() throws Exception {
 		System.out.println("==============================================");
@@ -2116,7 +2304,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * Enable Preconditions for WeatherFX API Parameters validation
 	 */
-	@Test(priority = 351, enabled = true)
+	@Test(priority = 526, enabled = true)
 	@Description("Verify Enable Preconditions For WeatherFX API Parameters")
 	public void Verify_enable_preConditions_for_WeatherFx_API_Parameters() throws Exception {
 		System.out.println("==============================================");
@@ -2158,7 +2346,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates wfxtg custom parameter of Hourly details call
 	 */
 	/*
-	 * @Test(priority = 352, enabled = true)
+	 * @Test(priority = 527, enabled = true)
 	 * 
 	 * @Description("Validating 'wfxtg' custom parameter of Hourly details call ")
 	 * public void Validate_HourlyDetails_wfxtg_Custom_param() throws Exception {
@@ -2176,7 +2364,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates wfxtg custom parameter of Daily details call
 	 */
 	/*
-	 * @Test(priority = 353, enabled = true)
+	 * @Test(priority = 528, enabled = true)
 	 * 
 	 * @Description("Validating 'wfxtg' custom parameter of Daily details call ")
 	 * public void Validate_DailyDetails_wfxtg_Custom_param() throws Exception {
@@ -2193,7 +2381,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates wfxtg custom parameter of Map details call
 	 */
-	@Test(priority = 354, enabled = true)
+	@Test(priority = 529, enabled = true)
 	@Description("Validating 'wfxtg' custom parameter of Map details call ")
 	public void Validate_MapDetails_wfxtg_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2207,7 +2395,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates cxtg custom parameter of Hourly details call
 	 */
 	/*
-	 * @Test(priority = 355, enabled = true)
+	 * @Test(priority = 530, enabled = true)
 	 * 
 	 * @Description("Validating 'cxtg' custom parameter of Hourly details call ")
 	 * public void Validate_HourlyDetails_cxtg_Custom_param() throws Exception {
@@ -2225,7 +2413,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates cxtg custom parameter of Daily details call
 	 */
 	/*
-	 * @Test(priority = 356, enabled = true)
+	 * @Test(priority = 531, enabled = true)
 	 * 
 	 * @Description("Validating 'cxtg' custom parameter of Daily details call ")
 	 * public void Validate_DailyDetails_cxtg_Custom_param() throws Exception {
@@ -2242,7 +2430,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates cxtg custom parameter of Map details call
 	 */
-	@Test(priority = 357, enabled = true)
+	@Test(priority = 532, enabled = true)
 	@Description("Validating 'cxtg' custom parameter of Map details call ")
 	public void Validate_MapDetails_cxtg_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2256,7 +2444,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates zcs custom parameter of Hourly details call
 	 */
 	/*
-	 * @Test(priority = 358, enabled = true)
+	 * @Test(priority = 533, enabled = true)
 	 * 
 	 * @Description("Validating 'zcs' custom parameter of Hourly details call ")
 	 * public void Validate_HourlyDetails_zcs_Custom_param() throws Exception {
@@ -2274,7 +2462,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates zcs custom parameter of Daily details call
 	 */
 	/*
-	 * @Test(priority = 359, enabled = true)
+	 * @Test(priority = 534, enabled = true)
 	 * 
 	 * @Description("Validating 'zcs' custom parameter of Daily details call ")
 	 * public void Validate_DailyDetails_zcs_Custom_param() throws Exception {
@@ -2291,7 +2479,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates zcs custom parameter of Map details call
 	 */
-	@Test(priority = 360, enabled = true)
+	@Test(priority = 535, enabled = true)
 	@Description("Validating 'zcs' custom parameter of Map details call ")
 	public void Validate_MapDetails_zcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2305,7 +2493,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates hzcs custom parameter of Hourly details call
 	 */
 	/*
-	 * @Test(priority = 361, enabled = true)
+	 * @Test(priority = 536, enabled = true)
 	 * 
 	 * @Description("Validating 'hzcs' custom parameter of Hourly details call ")
 	 * public void Validate_HourlyDetails_hzcs_Custom_param() throws Exception {
@@ -2323,7 +2511,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates hzcs custom parameter of Daily details call
 	 */
 	/*
-	 * @Test(priority = 362, enabled = true)
+	 * @Test(priority = 537, enabled = true)
 	 * 
 	 * @Description("Validating 'hzcs' custom parameter of Daily details call ")
 	 * public void Validate_DailyDetails_hzcs_Custom_param() throws Exception {
@@ -2340,7 +2528,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates hzcs custom parameter of Map details call
 	 */
-	@Test(priority = 363, enabled = true)
+	@Test(priority = 538, enabled = true)
 	@Description("Validating 'hzcs' custom parameter of Map details call ")
 	public void Validate_MapDetails_hzcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2354,7 +2542,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates nzcs custom parameter of Hourly details call
 	 */
 	/*
-	 * @Test(priority = 364, enabled = true)
+	 * @Test(priority = 539, enabled = true)
 	 * 
 	 * @Description("Validating 'nzcs' custom parameter of Hourly details call ")
 	 * public void Validate_HourlyDetails_nzcs_Custom_param() throws Exception {
@@ -2372,7 +2560,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates nzcs custom parameter of Daily details call
 	 */
 	/*
-	 * @Test(priority = 365, enabled = true)
+	 * @Test(priority = 540, enabled = true)
 	 * 
 	 * @Description("Validating 'nzcs' custom parameter of Daily details call ")
 	 * public void Validate_DailyDetails_nzcs_Custom_param() throws Exception {
@@ -2389,7 +2577,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates nzcs custom parameter of Map details call
 	 */
-	@Test(priority = 366, enabled = true)
+	@Test(priority = 541, enabled = true)
 	@Description("Validating 'nzcs' custom parameter of Map details call ")
 	public void Validate_MapDetails_nzcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2403,7 +2591,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * Enable Preconditions for WeatherFX API Parameters validation from Planning
 	 * Card
 	 */
-	@Test(priority = 401, enabled = true)
+	@Test(priority = 575, enabled = true)
 	@Description("Verify Enable Preconditions For WeatherFX API Parameters From Planning Card")
 	public void Verify_enable_preConditions_for_WeatherFx_API_ParametersFromPlanningCard() throws Exception {
 		System.out.println("==============================================");
@@ -2419,7 +2607,8 @@ public class SmokeTest extends TwcIosBaseTest {
 		TestBase.waitForMilliSeconds(20000);
 		// navigate to Planning Card
 		// Utils.navigateToPlanningCard();
-		Utils.navigateTofeedCard("planning-containerView");
+		//Utils.navigateTofeedCard("planning-containerView");
+		pScreen.scrollToPlanningCard();
 		TestBase.waitForMilliSeconds(5000);
 		// navigate to Hourly Details from Planning Card
 		pScreen.navigateToHourlyDetailsFromPlanningCard();
@@ -2442,7 +2631,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates wfxtg custom parameter of Hourly details banner ad call
 	 */
-	/*@Test(priority = 403, enabled = true)
+	/*@Test(priority = 576, enabled = true)
 	@Description("Validating 'wfxtg' custom parameter of Hourly details banner ad call ")
 	public void Validate_HourlyDetails_Banner_Ad_wfxtg_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2455,7 +2644,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates wfxtg custom parameter of Daily details banner ad call
 	 */
-	@Test(priority = 404, enabled = true)
+	@Test(priority = 577, enabled = true)
 	@Description("Validating 'wfxtg' custom parameter of Daily details banner ad call ")
 	public void Validate_DailyDetails_Banner_Ad_wfxtg_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2469,7 +2658,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates cxtg custom parameter of Home Screen banner banner ad
 	 * call
 	 */
-	/*@Test(priority = 406, enabled = true)
+	/*@Test(priority = 578, enabled = true)
 	@Description("Validating 'cxtg' custom parameter of Hourly details banner ad call ")
 	public void Validate_HourlyDetails_Banner_Ad_cxtg_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2482,7 +2671,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates cxtg custom parameter of Daily details banner ad call
 	 */
-	@Test(priority = 407, enabled = true)
+	@Test(priority = 579, enabled = true)
 	@Description("Validating 'cxtg' custom parameter of Daily details banner ad call ")
 	public void Validate_DailyDetails_Banner_Ad_cxtg_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2495,7 +2684,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates zcs custom parameter of Hourly details banner ad call
 	 */
-	/*@Test(priority = 409, enabled = true)
+	/*@Test(priority = 580, enabled = true)
 	@Description("Validating 'zcs' custom parameter of Hourly details banner ad call ")
 	public void Validate_HourlyDetails_Banner_Ad_zcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2508,7 +2697,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates zcs custom parameter of Daily details banner ad call
 	 */
-	@Test(priority = 410, enabled = true)
+	@Test(priority = 581, enabled = true)
 	@Description("Validating 'zcs' custom parameter of Daily details banner ad call ")
 	public void Validate_DailyDetails_Banner_Ad_zcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2521,7 +2710,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates hzcs custom parameter of Hourly details banner ad call
 	 */
-	/*@Test(priority = 412, enabled = true)
+	/*@Test(priority = 582, enabled = true)
 	@Description("Validating 'hzcs' custom parameter of Hourly details banner ad call ")
 	public void Validate_HourlyDetails_Banner_Ad_hzcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2534,7 +2723,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates hzcs custom parameter of Daily details banner ad call
 	 */
-	@Test(priority = 413, enabled = true)
+	@Test(priority = 583, enabled = true)
 	@Description("Validating 'hzcs' custom parameter of Daily details banner ad call ")
 	public void Validate_DailyDetails_Banner_Ad_hzcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2547,7 +2736,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates nzcs custom parameter of Hourly details banner ad call
 	 */
-	/*@Test(priority = 415, enabled = true)
+	/*@Test(priority = 584, enabled = true)
 	@Description("Validating 'nzcs' custom parameter of Hourly details banner ad call ")
 	public void Validate_HourlyDetails_Banner_Ad_nzcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2560,7 +2749,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates nzcs custom parameter of Daily details banner ad call
 	 */
-	@Test(priority = 416, enabled = true)
+	@Test(priority = 585, enabled = true)
 	@Description("Validating 'nzcs' custom parameter of Daily details banner ad call ")
 	public void Validate_DailyDetails_Banner_Ad_nzcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2576,7 +2765,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 */
 
 	/*
-	 * @Test(priority = 426, enabled = true)
+	 * @Test(priority = 586, enabled = true)
 	 * 
 	 * @Description("Verify Enable Preconditions For WeatherFX API Parameters of HomeScreen Banner Ad From Planning Card"
 	 * ) public void
@@ -2603,7 +2792,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates wfxtg custom parameter of Home Screen banner ad call
 	 */
 	/*
-	 * @Test(priority = 427, enabled = true)
+	 * @Test(priority = 587, enabled = true)
 	 * 
 	 * @Description("Validating 'wfxtg' custom parameter of Home Screen banner ad i.e. Home Screen today call "
 	 * ) public void Validate_HomeScreen_Banner_Ad_wfxtg_Custom_param() throws
@@ -2623,7 +2812,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates cxtg custom parameter of Home Screen banner ad call
 	 */
 	/*
-	 * @Test(priority = 428, enabled = true)
+	 * @Test(priority = 588, enabled = true)
 	 * 
 	 * @Description("Validating 'cxtg' custom parameter of Home Screen banner ad i.e. Home Screen today call "
 	 * ) public void Validate_HomeScreen_Banner_Ad_cxtg_Custom_param() throws
@@ -2643,7 +2832,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates zcs custom parameter of Home Screen banner ad call
 	 */
 	/*
-	 * @Test(priority = 429, enabled = true)
+	 * @Test(priority = 589, enabled = true)
 	 * 
 	 * @Description("Validating 'zcs' custom parameter of Home Screen banner ad i.e. Home Screen today call "
 	 * ) public void Validate_HomeScreen_Banner_Ad_zcs_Custom_param() throws
@@ -2662,7 +2851,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates hzcs custom parameter of Home Screen banner ad call
 	 */
 	/*
-	 * @Test(priority = 430, enabled = true)
+	 * @Test(priority = 590, enabled = true)
 	 * 
 	 * @Description("Validating 'hzcs' custom parameter of Home Screen banner ad i.e. Home Screen today call "
 	 * ) public void Validate_HomeScreen_Banner_Ad_hzcs_Custom_param() throws
@@ -2682,7 +2871,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates nzcs custom parameter of Home Screen banner ad call
 	 */
 	/*
-	 * @Test(priority = 431, enabled = true)
+	 * @Test(priority = 591, enabled = true)
 	 * 
 	 * @Description("Validating 'nzcs' custom parameter of Home Screen banner ad i.e. Home Screen today call "
 	 * ) public void Validate_HomeScreen_Banner_Ad_nzcs_Custom_param() throws
@@ -2701,7 +2890,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method navigates to video module on navtab and gets video call iu value
 	 */
-	@Test(priority = 451, enabled = true)
+	@Test(priority = 650, enabled = true)
 	@Description("Verify Preroll ad on Video module")
 	public void Verify_PrerollAd() throws Exception {
 		System.out.println("==============================================");
@@ -2731,11 +2920,25 @@ public class SmokeTest extends TwcIosBaseTest {
 		Utils.get_iu_value_of_Feedcall("Smoke", "PreRollVideo");
 		Utils.verifyPubadCal("Smoke", "PreRollVideo");
 	}
+	
+	/**
+	 * This method validates ltv custom parameter of video call
+	 */
+	@Test(priority = 651, enabled = true)
+	@Description("Validating 'ltv' custom parameter of video call ")
+	public void Validate_PreRollVideo_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Video call");
+		logStep("Validating ltv custom parameter of Video call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "PreRollVideo", "ltv", "NotNull");
+
+	}
+	
 
 	/**
 	 * This method validates cmsid custom parameter of video call
 	 */
-	@Test(priority = 452, enabled = true)
+	@Test(priority = 652, enabled = true)
 	@Description("Validating 'cmsid' custom parameter of Video call ")
 	public void Validate_PreRollVideo_cmsid_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2748,7 +2951,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates ttid custom parameter of video call
 	 */
-	@Test(priority = 453, enabled = true)
+	@Test(priority = 653, enabled = true)
 	@Description("Validating 'ttid' custom parameter of Video call ")
 	public void Validate_PreRollVideo_ttid_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2761,7 +2964,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates vid custom parameter of video call
 	 */
-	@Test(priority = 454, enabled = true)
+	@Test(priority = 654, enabled = true)
 	@Description("Validating 'vid' custom parameter of Video call ")
 	public void Validate_PreRollVideo_vid_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2774,7 +2977,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates descritpion url of video call
 	 */
-	@Test(priority = 455, enabled = true)
+	@Test(priority = 655, enabled = true)
 	@Description("Validating 'description url' of Video call ")
 	public void Validate_PreRollVideo_description_url_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2787,7 +2990,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates ref custom parameter of video call
 	 */
-	@Test(priority = 456, enabled = true)
+	@Test(priority = 656, enabled = true)
 	@Description("Validating 'ref' custom parameter of Video call when navigated from nav tab ")
 	public void Validate_PreRollVideo_ref_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2800,7 +3003,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates dnt custom parameter of PreRollVideo call
 	 */
-	@Test(priority = 457, enabled = true)
+	@Test(priority = 657, enabled = true)
 	@Description("Validating 'dnt' custom parameter of PreRollVideo call ")
 	public void Validate_PreRollVideo_dnt_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2813,7 +3016,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates wfxtg custom parameter of video call
 	 */
-	@Test(priority = 460, enabled = true)
+	@Test(priority = 660, enabled = true)
 	@Description("Validating 'wfxtg' custom parameter of video call ")
 	public void Validate_PreRollVideo_wfxtg_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2826,7 +3029,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates cxtg custom parameter of video call
 	 */
-	@Test(priority = 461, enabled = true)
+	@Test(priority = 661, enabled = true)
 	@Description("Validating 'cxtg' custom parameter of video call ")
 	public void Validate_PreRollVideo_cxtg_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2839,7 +3042,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates zcs custom parameter of video call
 	 */
-	@Test(priority = 462, enabled = true)
+	@Test(priority = 662, enabled = true)
 	@Description("Validating 'zcs' custom parameter of video call ")
 	public void Validate_PreRollVideo_zcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2852,7 +3055,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates hzcs custom parameter of video call
 	 */
-	@Test(priority = 463, enabled = true)
+	@Test(priority = 663, enabled = true)
 	@Description("Validating 'hzcs' custom parameter of video call ")
 	public void Validate_PreRollVideo_hzcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2865,7 +3068,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates nzcs custom parameter of video call
 	 */
-	@Test(priority = 464, enabled = true)
+	@Test(priority = 664, enabled = true)
 	@Description("Validating 'nzcs' custom parameter of video call ")
 	public void Validate_PreRollVideo_nzcs_Custom_param() throws Exception {
 		System.out.println("==============================================");
@@ -2879,7 +3082,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates Google Interactive Media Ads SDK version i.e. IMA SDK
 	 */
-	@Test(priority = 475, enabled = true)
+	@Test(priority = 675, enabled = true)
 	@Description("Validating Google Interactive Media Ads SDK version of Preroll video call ")
 	public void Validate_IMA_SDK_version() throws Exception {
 		System.out.println("==============================================");
@@ -2895,7 +3098,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Video Call
 	 */
-	@Test(priority = 480, enabled = true)
+	@Test(priority = 680, enabled = true)
 	@Description("Validating 'content_url' parameter of Video Call")
 	public void validate_PreRollVideo_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -2907,7 +3110,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates Hourly Details BigAd1 ad call
 	 */
-	@Test(priority = 501, enabled = true)
+	@Test(priority = 701, enabled = true)
 	@Description("Verify Hourly Details BigAd1 Ad call")
 	public void Verify_Hourly_Details_BigAd1_Adcall() throws Exception {
 		System.out.println("==============================================");
@@ -2930,7 +3133,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates Hourly Details BigAd2 ad call
 	 */
-	@Test(priority = 502, enabled = true)
+	@Test(priority = 702, enabled = true)
 	@Description("Verify Hourly Details BigAd2 Ad call")
 	public void Verify_Hourly_Details_BigAd2_Adcall() throws Exception {
 		System.out.println("==============================================");
@@ -2942,7 +3145,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates Hourly Details BigAd3 ad call
 	 */
-	@Test(priority = 503, enabled = true)
+	@Test(priority = 703, enabled = true)
 	@Description("Verify Hourly Details BigAd3 Ad call")
 	public void Verify_Hourly_Details_BigAd3_Adcall() throws Exception {
 		System.out.println("==============================================");
@@ -2955,7 +3158,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Hourly Details BigAd1 Call
 	 */
-	@Test(priority = 504, enabled = true)
+	@Test(priority = 704, enabled = true)
 	@Description("Validating 'content_url' parameter of Hourly Details BigAd1 Call")
 	public void validate_Hourly_Details_BigAd1_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -2967,7 +3170,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Hourly Details BigAd2 Call
 	 */
-	@Test(priority = 505, enabled = true)
+	@Test(priority = 705, enabled = true)
 	@Description("Validating 'content_url' parameter of Hourly Details BigAd2 Call")
 	public void validate_Hourly_Details_BigAd2_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -2979,7 +3182,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates content_url parameter of Hourly Details BigAd3 Call
 	 */
-	@Test(priority = 506, enabled = true)
+	@Test(priority = 706, enabled = true)
 	@Description("Validating 'content_url' parameter of Hourly Details BigAd3 Call")
 	public void validate_Hourly_Details_BigAd3_Call_content_url_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -2987,17 +3190,58 @@ public class SmokeTest extends TwcIosBaseTest {
 		logStep("Validating content_url parameter of Hourly Details BigAd3 call");
 		Utils.validate_non_custom_param_val_in_gampad_url("Smoke", "Hourly3", "content_url", "https://weather.com/weather/hourbyhour/l/"+Utils.placeId);
 	}
+	
+	/**
+	 * This method validates ltv custom parameter of Hourly Details BigAd1 Call
+	 */
+	@Test(priority = 710, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Hourly Details BigAd1 Call ")
+	public void Validate_Hourly_Details_BigAd1_Call_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Hourly Details BigAd1 Call");
+		logStep("Validating ltv custom parameter of Hourly Details BigAd1 Call");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Hourly1", "ltv", "NotNull");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Hourly Details BigAd2 Call
+	 */
+	@Test(priority = 711, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Hourly Details BigAd2 Call ")
+	public void Validate_Hourly_Details_BigAd2_Call_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Hourly Details BigAd2 Call");
+		logStep("Validating ltv custom parameter of Hourly Details BigAd2 Call");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Hourly2", "ltv", "NotNull");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Hourly Details BigAd3 Call
+	 */
+	@Test(priority = 712, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Hourly Details BigAd3 Call ")
+	public void Validate_Hourly_Details_BigAd3_Call_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Hourly Details BigAd3 Call");
+		logStep("Validating ltv custom parameter of Hourly Details BigAd3 Call");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Hourly3", "ltv", "NotNull");
+
+	}
 
 	/**
 	 * Kill and Launch the app for API Calls verification
 	 */
-	@Test(priority = 600, enabled = true)
+	@Test(priority = 800, enabled = true)
 	@Description("Kill and Launch the app for API calls verification")
 	public void kill_and_Launch_app_for_api_calls() throws Exception {
 		System.out.println("==============================================");
 		System.out.println("****** Kill and Launch the app for API calls verification");
 		logStep("Kill and Launch the app for API calls verification");
 		TestBase.waitForMilliSeconds(5000);
+		stScreen.select_Airlock_Branch("Clear");
+		stScreen.select_Airlock_UserGroup("Clear");
 		proxy.clearCharlesSession();
 		Functions.close_launchApp();
 		Functions.checkForAppState();
@@ -3015,7 +3259,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates lotame call
 	 */
-	@Test(priority = 601, enabled = true)
+	@Test(priority = 801, enabled = true)
 	@Description("Lotame Call verification on Background Launch")
 	public void Verify_Lotame_Call_On_KillAndLaunch() throws Exception {
 		System.out.println("==============================================");
@@ -3028,7 +3272,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates Turbo Api call i.e. api.weather.com call
 	 */
-	@Test(priority = 602, enabled = true)
+	@Test(priority = 802, enabled = true)
 	@Description("Turbo API Call verification on Kill and Launch")
 	public void Verify_TurboAPI_Call_On_KillAndLaunch() throws Exception {
 		System.out.println("==============================================");
@@ -3041,7 +3285,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates WFXTriggers call
 	 */
-	@Test(priority = 603, enabled = true)
+	@Test(priority = 803, enabled = true)
 	@Description("WFX Trigger Call verification On Kill and Launch")
 	public void Verify_WFXTriggers_Call_On_KillAndLaunch() throws Exception {
 		System.out.println("==============================================");
@@ -3055,7 +3299,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * Factual call is blocked, hence expected to not present this call in charles
 	 * session from 12.6 builds onwards...
 	 */
-	@Test(priority = 604, enabled = true)
+	@Test(priority = 804, enabled = true)
 	@Description("Factual Call verification on Kill and Launch")
 	public void Verify_LocationWFXTriggers_Call_On_KillAndLaunch() throws Exception {
 		System.out.println("==============================================");
@@ -3068,7 +3312,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates Amazon SDK version
 	 */
-	@Test(priority = 625, enabled = true)
+	@Test(priority = 825, enabled = true)
 	@Description("Validating 'adsdk' parameter of Amazon aax call ")
 	public void Validate_Amazon_SDK_adsdk_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -3082,7 +3326,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates Google Mobile Ads SDK Version i.e. GMA SDK
 	 */
-	@Test(priority = 626, enabled = true)
+	@Test(priority = 826, enabled = true)
 	@Description("Validating Google Mobile Ads SDK version of gampad call ")
 	public void Validate_GMA_SDK_version() throws Exception {
 		System.out.println("==============================================");
@@ -3095,7 +3339,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates Criteo SDK Version
 	 */
-	@Test(priority = 627, enabled = true)
+	@Test(priority = 827, enabled = true)
 	@Description("Validating 'sdkVersion' parameter of Criteo SDK config app call ")
 	public void Validate_Criteo_SDK_config_app_Call_sdkVersion_parameter() throws Exception {
 		System.out.println("==============================================");
@@ -3108,7 +3352,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates Criteo Bidder API (invapp v2) call response code
 	 */
-	@Test(priority = 651, enabled = true)
+	@Test(priority = 851, enabled = true)
 	@Description("Validating Criteo Bidder API (invapp v2) call response code")
 	public void Validate_Criteo_SDK_Bidder_API_Call_Response_Code() throws Exception {
 		System.out.println("==============================================");
@@ -3121,7 +3365,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	/**
 	 * This method validates Initialization API (config app) call response code
 	 */
-	@Test(priority = 652, enabled = true)
+	@Test(priority = 852, enabled = true)
 	@Description("Validating Criteo Initialization API (config app) call response code")
 	public void Validate_Criteo_SDK_Initialization_API_Call_Response_Code() throws Exception {
 		System.out.println("==============================================");
@@ -3135,7 +3379,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates Initialization API (config app) call response parameter
 	 * 'csmEnabled'
 	 */
-	@Test(priority = 653, enabled = true)
+	@Test(priority = 853, enabled = true)
 	@Description("Validating Criteo Initialization API (config app) call response parameter 'csmEnabled' value")
 	public void Validate_Criteo_SDK_Initialization_API_Call_Response_Parameter_csmEnabled() throws Exception {
 		System.out.println("==============================================");
@@ -3150,7 +3394,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates Initialization API (config app) call response parameter
 	 * 'liveBiddingEnabled'
 	 */
-	@Test(priority = 654, enabled = true)
+	@Test(priority = 854, enabled = true)
 	@Description("Validating Criteo Initialization API (config app) call response parameter 'liveBiddingEnabled' value")
 	public void Validate_Criteo_SDK_Initialization_API_Call_Response_Parameter_liveBiddingEnabled() throws Exception {
 		System.out.println("==============================================");
@@ -3165,7 +3409,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates Initialization API (config app) call response parameter
 	 * 'liveBiddingTimeBudgetInMillis'
 	 */ 
-	 /* @Test(priority = 655, enabled = true)
+	 /* @Test(priority = 855, enabled = true)
 	 *  @Description("Validating Criteo Initialization API (config app) call response parameter 'liveBiddingTimeBudgetInMillis' value"
 	 * ) public void
 	 * Validate_Criteo_SDK_Initialization_API_Call_Response_Parameter_liveBiddingTimeBudgetInMillis
@@ -3184,7 +3428,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates Initialization API (config app) call response parameter
 	 * 'prefetchOnInitEnabled'
 	 */
-	@Test(priority = 656, enabled = true)
+	@Test(priority = 856, enabled = true)
 	@Description("Validating Criteo Initialization API (config app) call response parameter 'prefetchOnInitEnabled' value")
 	public void Validate_Criteo_SDK_Initialization_API_Call_Response_Parameter_prefetchOnInitEnabled()
 			throws Exception {
@@ -3200,7 +3444,7 @@ public class SmokeTest extends TwcIosBaseTest {
 	 * This method validates Initialization API (config app) call response parameter
 	 * 'remoteLogLevel'
 	 */
-	@Test(priority = 657, enabled = true)
+	@Test(priority = 857, enabled = true)
 	@Description("Validating Criteo Initialization API (config app) call response parameter 'remoteLogLevel' value")
 	public void Validate_Criteo_SDK_Initialization_API_Call_Response_Parameter_remoteLogLevel() throws Exception {
 		System.out.println("==============================================");
@@ -3210,12 +3454,29 @@ public class SmokeTest extends TwcIosBaseTest {
 		Utils.validate_Criteo_SDK_config_app_call_response_parameter("Smoke", "Criteo", "remoteLogLevel",
 				properties.getProperty("remoteLogLevel"));
 	}
+	
+	@Test(priority = 875, enabled = true)
+	@Description("Verify Confiant SDK Calls")
+	public void Verify_Confiant_SDK_Calls() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Confiant SDK Calls Validation test started");
+		logStep("Confiant SDK Calls Validation test started");
+		/*Functions.archive_folder("Charles");
+		TestBase.waitForMilliSeconds(5000);
+		stScreen.select_Airlock_Branch("Clear");
+		stScreen.select_Airlock_UserGroup("confiant");
+		proxy.clearCharlesSession();
+		Functions.close_launchApp();
+		proxy.getXml();
+		Utils.createXMLFileForCharlesSessionFile();*/
+		Utils.verifyConfiantSDKInitializationCalls("Smoke", "Confiant");
+	}
 
 	/**
 	 * This method validates Seasonal Hub details page ad call
 	 */
 /*Since Ads are disabled on Seasonal hub card, now navigating to all indexes and validating for non presence of gampad call in the above, to reduce execution time
- * @Test(priority = 700, enabled = true)
+ * @Test(priority = 900, enabled = true)
 	@Description("Verify Seasonal Hub details page iu")
 	public void Verify_Seasonal_Hub_Details_Page_AdCall() throws Exception {
 		System.out.println("==============================================");
@@ -3230,41 +3491,54 @@ public class SmokeTest extends TwcIosBaseTest {
 		sScreen.verifyPubadCal_SeasonalHub("Smoke", "SeasonalHub(Details)", false);
 		hmTab.clickonHomeTab();
 	}*/
-	
-	@Test(priority = 800, enabled = true)
+		
+	@Test(priority = 1000, enabled = true)
 	@Description("Launch the app from widget")
 	public void launchAppFromWidget() throws Exception {
 		System.out.println("==============================================");
 		System.out.println("****** Launch the App from widget test case Started");
 		logStep("****** Launch the App from widget test case Started");
-		Ad.terminateApp("com.weather.TWC");
-		System.out.println("App closed successfully");
-		logStep("App closed successfully");
-		proxy.clearCharlesSession();
-		Functions.launchAppFromTheWidgetApp();
-		System.out.println("App launched From Widget");
-		logStep("App launched From Widget");
-		Functions.archive_folder("Charles");
-		proxy.getXml();
-		Utils.createXMLFileForCharlesSessionFile();
-		Ad1.terminateApp("com.apple.weather");
-		Ad1.terminateApp("com.weather.TWC");
-		Ad1.quit();
+		Utils.getiOSVersion();
+		if (Utils.iOSVersion.contains("16.")) {
+			System.out.println("Since iOS version >= 16, skipping the app launching from iOS widget and par parameter validation");
+			logStep("Since iOS version >= 16, skipping the app launching from iOS widget and par parameter validation");
+			
+		} else {
+			Ad.terminateApp("com.weather.TWC");
+			System.out.println("App closed successfully");
+			logStep("App closed successfully");
+			proxy.clearCharlesSession();
+			Functions.launchAppFromTheWidgetApp();
+			System.out.println("App launched From Widget");
+			logStep("App launched From Widget");
+			Functions.archive_folder("Charles");
+			proxy.getXml();
+			Utils.createXMLFileForCharlesSessionFile();
+			Ad1.terminateApp("com.apple.weather");
+			Ad1.terminateApp("com.weather.TWC");
+			Ad1.quit();
+			
+			System.out.println("==============================================");
+			System.out.println("****** Validating par custom parameter of Marquee call when app launched from widget");
+			logStep("Validating par custom parameter of Marquee call ");
+			Utils.validate_custom_param_val_of_gampad("Smoke", "Marquee", "par", "apple_widget");
+		}
+		
 		
 	}
 	
 	/**
 	 * This method validates par custom parameter of Marquee call when app launched from widget
 	 */
-	@Test(priority = 801, enabled = true)
+/*	@Test(priority = 1001, enabled = true)
 	@Description("Validating 'par' custom parameter of Marquee call when app launched from widget")
-	public void Validate_Marquee_Call_par_Custom_param() throws Exception {
+	public void Validate_Marquee_Call_par_Custom_param_when_app_launched_from_widget() throws Exception {
 		System.out.println("==============================================");
 		System.out.println("****** Validating par custom parameter of Marquee call when app launched from widget");
 		logStep("Validating par custom parameter of Marquee call ");
 		Utils.validate_custom_param_val_of_gampad("Smoke", "Marquee", "par", "apple_widget");
 
-	}
+	}*/
 	
 	
 

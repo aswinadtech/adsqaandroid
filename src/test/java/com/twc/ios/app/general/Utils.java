@@ -68,6 +68,7 @@ import com.twc.ios.app.pages.VideoCardScreen;
 import com.twc.ios.app.pages.VideoNavTab;
 import com.twc.ios.app.pages.WatsonCardScreen;
 
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.functions.ExpectedCondition;
 
@@ -87,7 +88,8 @@ public class Utils extends Functions {
 	public static int criteogampadcallcount = 0;
 	public static String previous_IPAddress = null;
 	public static String current_IPAddress = null;
-	public static String current_WifiName = null;
+	public static String current_WifiName = "Test";
+	public static String iOSVersion = null;
 	public static LinkedHashMap<String, String> feedCardsMap = new LinkedHashMap<String, String>();
 	public static LinkedHashMap<String, String> feedAdCardsMap = new LinkedHashMap<String, String>();
 	public static int feedCardCurrentPosition = 3;
@@ -105,10 +107,50 @@ public class Utils extends Functions {
 	public enum CardNames {
 		video, today, news, aq, maps, daily
 	}
+	
+	/**
+	 * Get Current Wifi Name and Write to properties file
+	 * This method works only if the device is connected to system
+	 * Call this method after device is launched, to get the ios Version from Capabilities incase of failure
+	 * @throws Exception
+	 */
+	public static void getiOSVersion() throws Exception {
+		// TODO Auto-generated method stub
+		Process p = null;
+		try {
+			File bashFile = new File(System.getProperty("user.dir") + "/getOSName.sh");
+			String[] cmd = { "/bin/sh", bashFile.getName() };
+
+			p = Runtime.getRuntime().exec(cmd);
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream())); 
+			//System.out.println(reader.lines().count());
+			
+			String s;
+					
+			while ((s = reader.readLine()) != null) {
+				System.out.println("Curent iOS Version is: " + s);
+				logStep("Curent iOS Version is: " + s);
+				iOSVersion = s;
+							
+			}
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println("There is an exception while finding iOS Version, hence reading from Capabilities");
+			logStep("There is an exception while finding iOS Version, hence reading from Capabilities");
+			e.printStackTrace();
+			iOSVersion = (String) Ad.getCapabilities().getCapability("platformVersion");
+		}
+		p.destroy();
+		
+		
+		
+	}
 
 	/**
 	 * Get Current Wifi Name and Write to properties file
-	 * @param enableProxy
 	 * @throws Exception
 	 */
 	public static void getCurrentSSIDName() throws Exception {
@@ -121,6 +163,7 @@ public class Utils extends Functions {
 			p = Runtime.getRuntime().exec(cmd);
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			
 			String s;
 			while ((s = reader.readLine()) != null) {
 				System.out.println("Current Wifi Name is : " + s);
@@ -904,7 +947,7 @@ public class Utils extends Functions {
 	}
 	
 	/**
-	 * This method mainly used before clearning charles session to check  for  interstitial call.
+	 * This method mainly used before clearing charles session to check  for  interstitial call.
 	 * @param excelName
 	 * @param sheetName
 	 * @throws Exception 
@@ -4060,8 +4103,8 @@ public class Utils extends Functions {
 
 				} else if (sheetName.equalsIgnoreCase("Health(coldAndFluArticles)")
 						|| sheetName.equalsIgnoreCase("Health(allergyArticles)")) {
-
-					int j;
+					
+				/*	int j;
 					if (aaxHealthArticlesCheckCount == 0) {
 						j = 0;
 					} else {
@@ -4094,13 +4137,7 @@ public class Utils extends Functions {
 							amazonBiddingSuccessCount++;
 							if (listOf_b_Params.get(j).equalsIgnoreCase(customParamsList.get(i))) {
 								successCount++;
-								/*
-								 * System.out.println("amazon aax " + sheetName +
-								 * " call bid value is matched with corresponding gampad call bid value");
-								 * logStep("amazon aax " + sheetName +
-								 * " call bid value is matched with corresponding gampad call bid value");
-								 */
-
+								
 								System.out.println(j + " Occurance of Amazon call bid value: " + listOf_b_Params.get(j)
 										+ " is matched with " + i + " Occurance of corresponding " + sheetName
 										+ " gampad call " + cust_param + " value: " + customParamsList.get(i));
@@ -4129,6 +4166,58 @@ public class Utils extends Functions {
 											+ listOf_b_Params.get(j) + " is not matched with " + i
 											+ " Occurance of corresponding " + sheetName + " gampad call " + cust_param
 											+ " value: " + customParamsList.get(i));
+									failCount++;
+								}
+
+							}
+						}
+
+					}*/
+					
+					/**
+					 * Since in a single session both the articles uses same bid id hence for time being commented above logic, and added below one
+					 */
+					for (int i = 0, j = 0; i < maxIterations && j < maxIterations; i++,j++) {
+						if (isNonPreload) {
+							i++;
+						}
+						if (listOf_b_Params.get(j).equalsIgnoreCase("error")) {
+							amazonBiddingFailCount++;
+							if (listOf_b_Params.size() == 1) {
+								System.out.println(
+										"It looks that the only Occurance of Amazon Call bidding is not happened..Hence skipping the further validation...inspect the charles response for more details");
+								logStep("It looks that the only Occurance of Amazon Call bidding is not happened..Hence skipping the further validation...inspect the charles response for more details");
+							} else {
+								System.out.println("It looks that: " + j
+										+ " Occurance of Amazon Call bidding is not happened..Hence skipping the current instance validation...inspect the charles response for more details");
+								logStep("It looks that: " + j
+										+ " Occurance of Amazon Call bidding is not happened..Hence skipping the current instance validation...inspect the charles response for more details");
+							}
+
+						} else {
+							amazonBiddingSuccessCount++;
+							//if (listOf_b_Params.get(i).equalsIgnoreCase(customParamsList.get(i))) {
+							if (listOf_b_Params.contains(customParamsList.get(i))) {
+								successCount++;
+																
+								System.out.println(i + " Occurance of corresponding " + sheetName
+								+ " gampad call " + cust_param + " value: " + customParamsList.get(i) + " exists in "+listOf_b_Params);
+								
+								logStep(i + " Occurance of corresponding " + sheetName
+								+ " gampad call " + cust_param + " value: " + customParamsList.get(i) + " exists in "+listOf_b_Params);
+								
+							} else {
+								if (customParamsList.get(i).equalsIgnoreCase("-1")) {
+									System.out.println(i + " Occurance of corresponding " + sheetName + " gampad call: "
+											+ feedCall + " not having parameter " + cust_param);
+									logStep(i + " Occurance of corresponding " + sheetName + " gampad call: " + feedCall
+											+ " not having parameter " + cust_param);
+									failCount++;
+								} else {
+									System.out.println(i+ " Occurance of corresponding " + sheetName + " gampad call " + cust_param
+											+ " value: " + customParamsList.get(i) +" not exists in "+listOf_b_Params);
+									logStep(i+ " Occurance of corresponding " + sheetName + " gampad call " + cust_param
+											+ " value: " + customParamsList.get(i) +" not exists in "+listOf_b_Params);
 									failCount++;
 								}
 
@@ -4252,6 +4341,175 @@ public class Utils extends Functions {
 		}
 	}
 
+	/**
+	 * Gets Number Of Occurances Of API call with given host and path
+	 * @param host
+	 * @param path
+	 * @return
+	 * @throws Exception
+	 */
+	public static int getNoOfOccurancesOfAPICallWithHostandPath(String host, String path) throws Exception {
+		// readExcelValues.excelValues(excelName, sheetName);
+		File fXmlFile = new File(outfile.getName());
+
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		dbFactory.setValidating(false);
+		dbFactory.setNamespaceAware(true);
+		dbFactory.setFeature("http://xml.org/sax/features/namespaces", false);
+		// dbFactory.setNamespaceAware(true);
+		dbFactory.setFeature("http://xml.org/sax/features/validation", false);
+		dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+		dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+
+		Document doc = dBuilder.parse(fXmlFile);
+// Getting the transaction element by passing xpath expression
+		NodeList nodeList = doc.getElementsByTagName("transaction");
+		String xpathExpression = "charles-session/transaction/@host";
+		List<String> getQueryList = evaluateXPath(doc, xpathExpression);
+
+// Getting custom_params amzn_b values
+		List<String> customParamsList = new ArrayList<String>();
+		
+		int count = 0;
+		// String iuId = null;
+
+		boolean iuExists = false;
+		for (String qry : getQueryList) {
+			if (qry.contains(host)) {
+				iuExists = true;
+				break;
+			}
+		}
+		boolean hflag = false;
+		boolean pflag = false;
+		boolean resflag = false;
+
+		if (iuExists) {
+			System.out.println(host + "  call is present");
+			logStep(host + "  call is present");
+			outerloop: for (int p = 0; p < nodeList.getLength(); p++) {
+				// System.out.println("Total transactions: "+nodeList.getLength());
+				if (nodeList.item(p) instanceof Node) {
+					Node node = nodeList.item(p);
+					if (node.hasChildNodes()) {
+						NodeList nl = node.getChildNodes();
+						for (int j = 0; j < nl.getLength(); j++) {
+							// System.out.println("node1 length is: "+nl.getLength());
+							Node innernode = nl.item(j);
+							if (innernode != null) {
+								// System.out.println("Innernode name is: "+innernode.getNodeName());
+								if (innernode.getNodeName().equals("request")) {
+									//System.out.println("..............request.....................");
+									hflag = false;
+									pflag = false;
+									if (innernode.hasChildNodes()) {
+										NodeList n2 = innernode.getChildNodes();
+										for (int k = 0; k < n2.getLength(); k++) {
+											// System.out.println("node2 length is: "+n2.getLength());
+											Node innernode2 = n2.item(k);
+											if (innernode2 != null) {
+												// System.out.println("Innernode2 name is: "+innernode2.getNodeName());
+												if (innernode2.getNodeType() == Node.ELEMENT_NODE) {
+													Element eElement = (Element) innernode2;
+													// System.out.println("Innernode2 element name is:
+													// "+eElement.getNodeName());
+													if (eElement.getNodeName().equals("headers")) {
+														if (innernode2.hasChildNodes()) {
+															NodeList n3 = innernode2.getChildNodes();
+															for (int q = 0; q < n3.getLength(); q++) {
+																// System.out.println("node3 length is:
+																// "+n3.getLength());
+																Node innernode3 = n3.item(q);
+																if (innernode3 != null) {
+																	// System.out.println("Innernode3 name is:
+																	// "+innernode3.getNodeName());
+																	if (innernode3.getNodeType() == Node.ELEMENT_NODE) {
+																		Element eElement1 = (Element) innernode3;
+																		
+																		// System.out.println("Innernode3 element name
+																		// is: "+eElement1.getNodeName());
+																		if (eElement1.getNodeName().equals("header")) {
+																			String content = eElement1.getTextContent();
+																			//System.out.println("request body header..."+content);
+
+																			if (content.contains(host)) {
+																				hflag = true;
+																				//System.out.println("request body host found "+ content);
+																				
+																			} else if (content.contains(path)) {
+																				pflag = true;
+																				//System.out.println("request body path found "+ content);
+																				
+																			}
+																		}
+
+																		// this condition especially for android since
+																		// its file has path value under first-line
+																		// element
+																		if (eElement1.getNodeName()
+																				.equals("first-line")) {
+																			String content = eElement1.getTextContent();
+																			//System.out.println("request body first line "+content);
+
+																			if (content.contains(path)) {
+																				pflag = true;
+																				//System.out.println("request body path found " +  content);
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+
+								/*
+								 * if (flag) { // System.out.println("Exiting after found true "); //
+								 * System.out.println("checking innernode name is: "+innernode.getNodeName());
+								 * if (innernode.getNodeName().equals("response")) { //
+								 * System.out.println(innernode.getNodeName()); if (innernode.hasChildNodes()) {
+								 * NodeList n2 = innernode.getChildNodes(); for (int k = 0; k < n2.getLength();
+								 * k++) { Node innernode2 = n2.item(k); if (innernode2 != null) { if
+								 * (innernode2.getNodeType() == Node.ELEMENT_NODE) { Element eElement =
+								 * (Element) innernode2; if (eElement.getNodeName().equals("body")) { String
+								 * content = eElement.getTextContent(); //
+								 * System.out.println("response body "+content); if
+								 * (content.contains(readExcelValues.data[13][Cap])) { resflag = true; break
+								 * outerloop;
+								 * 
+								 * } } } } } } }
+								 * 
+								 * }
+								 */
+								if (hflag && pflag) {
+									resflag = true;
+									//break outerloop;
+									count++;
+									hflag = false;
+									pflag = false;
+								}
+							}
+						}
+					}
+				}
+				// flag = false;
+			}
+
+		} else {
+			System.out.println(host + " ad call is not present");
+			logStep(host + " ad call is not present");
+
+		}
+
+		return count;
+	}
+	
 	/**
 	 * Verifies API call with given host and path
 	 * @param host
@@ -4863,10 +5121,10 @@ public class Utils extends Functions {
 					if (cardName.contains("banner")) {
 						// navigate to Planning Card
 						// Utils.navigateToPlanningCard();
-						Utils.navigateTofeedCard("planning-containerView");
+						Utils.navigateTofeedCard("planning-containerView", false, false);
 					} else {
 						// navigate to feed card
-						Utils.navigateTofeedCard(cardName);
+						Utils.navigateTofeedCard(cardName, false, false);
 					}
 
 				}
@@ -5015,10 +5273,10 @@ public class Utils extends Functions {
 										if (cardName.contains("banner")) {
 											// navigate to Planning Card
 											// Utils.navigateToPlanningCard();
-											Utils.navigateTofeedCard("planning-containerView");
+											Utils.navigateTofeedCard("planning-containerView", false, false);
 										} else {
 											// navigate to feed card
-											Utils.navigateTofeedCard(cardName);
+											Utils.navigateTofeedCard(cardName, false, false);
 										}
 
 									}
@@ -5187,10 +5445,10 @@ public class Utils extends Functions {
 												if (cardName.contains("banner")) {
 													// navigate to Planning Card
 													// Utils.navigateToPlanningCard();
-													Utils.navigateTofeedCard("planning-containerView");
+													Utils.navigateTofeedCard("planning-containerView", false, false);
 												} else {
 													// navigate to feed card
-													Utils.navigateTofeedCard(cardName);
+													Utils.navigateTofeedCard(cardName, false, false);
 												}
 
 											}
@@ -5419,7 +5677,7 @@ public class Utils extends Functions {
 	 * @param includeDetailsPages
 	 * @throws Exception
 	 */
-	public static void navigateToAllCards(boolean includeDetailsPages, boolean navigateTwiceToDetailsPages) throws Exception {
+	public static void navigateToAllCardsOld(boolean includeDetailsPages, boolean navigateTwiceToDetailsPages) throws Exception {
 		HomeNavTab hmTab = new HomeNavTab(Ad);
 		HourlyNavTab hrTab = new HourlyNavTab(Ad);
 		DailyNavTab dTab = new DailyNavTab(Ad);
@@ -6167,6 +6425,66 @@ public class Utils extends Functions {
 
 		hmTab.clickonHomeTab();
 	}
+	
+	
+	/**
+	 * Navigate to All Feed Cards and its content pages by choice
+	 * 
+	 * @param includeDetailsPages
+	 * @param navigateTwiceToDetailsPages
+	 * @throws Exception
+	 */
+	public static void navigateToAllCards(boolean includeDetailsPages, boolean navigateTwiceToDetailsPages) throws Exception {
+		HomeNavTab hmTab = new HomeNavTab(Ad);
+		HourlyNavTab hrTab = new HourlyNavTab(Ad);
+		DailyNavTab dTab = new DailyNavTab(Ad);
+		RadarNavTab rTab = new RadarNavTab(Ad);
+		VideoNavTab vTab = new VideoNavTab(Ad);
+		AlertCenterScreen alertScreen = new AlertCenterScreen(Ad);
+		
+		ReadExcelValues.excelValues("Smoke", "General");
+		By byFooterCard = MobileBy.name(ReadExcelValues.data[1][Cap]);
+		
+	
+		hmTab.clickonHomeTab();
+		TestBase.waitForMilliSeconds(2000);
+		// navigate to Hourly tab
+		//hrTab.navigateToHourlyTab();
+		hrTab.navigateToHourlyTabAndHandleInterstitialAd();
+		TestBase.waitForMilliSeconds(2000);
+		// navigate to Daily tab
+		dTab.navigateToDailyTab();
+		TestBase.waitForMilliSeconds(2000);
+		// navigate to Radar tab
+		rTab.navigateToRadarTab();
+		TestBase.waitForMilliSeconds(2000);
+		// navigate to Video tab
+		vTab.navigateToVideoTab();
+		TestBase.waitForMilliSeconds(2000);
+		// clickonHomeTab
+		hmTab.clickonHomeTab();
+		TestBase.waitForMilliSeconds(5000);
+
+		System.out.println("User on Current Conditions Card and trying to scroll the app till end");
+		logStep("User on Current Conditions Card and trying to scroll the app till end");
+		
+		//By byNextGenIMCard = MobileBy.xpath("//XCUIElementTypeOther[@name='nextgen-integrated-marquee-card-containerView']");
+		//nextGenIMadDisplayed = isDisplayed(byNextGenIMCard);
+		
+		Functions.genericScrollTWC(byFooterCard, true, false, getOffsetYTop(), TOLERANCE_FROM_TOP, includeDetailsPages, navigateTwiceToDetailsPages);
+		
+		hmTab.clickonHomeTab();
+		TestBase.waitForMilliSeconds(2000);
+		
+		// navigate to Alerts
+		alertScreen.navigateToMyAlerts();
+		if (navigateTwiceToDetailsPages) {	
+			alertScreen.navigateToMyAlerts();
+		}
+		TestBase.waitForMilliSeconds(2000);
+
+		hmTab.clickonHomeTab();
+	}
 
 	/**
 	 * Navigate to Specific Feed Card by choice
@@ -6174,7 +6492,7 @@ public class Utils extends Functions {
 	 * @param feedCard
 	 * @throws Exception
 	 */
-	public static void navigateTofeedCard(String feedCard) throws Exception {
+	public static void navigateTofeedCardOld(String feedCard) throws Exception {
 		HomeNavTab hmTab = new HomeNavTab(Ad);
 		CurrentConditionsCardScreen cConditionsCardScreen = new CurrentConditionsCardScreen(Ad);
 
@@ -6750,6 +7068,10 @@ public class Utils extends Functions {
 			
 		}
 
+	}
+	
+	public static void navigateTofeedCard(String feedCard, boolean includeDetailsPages, boolean navigateTwiceToDetailsPages) throws java.lang.Exception {
+		Functions.genericScrollTWC(feedCard, true, true, getOffsetYTop(), TOLERANCE_FROM_TOP, includeDetailsPages, navigateTwiceToDetailsPages);
 	}
 
 	/**
@@ -9352,9 +9674,8 @@ public class Utils extends Functions {
 		} else {
 			System.out.println(host + path1 + " call is not present in Charles session");
 			logStep(host + path1+ " call is not present in Charles session");
-			System.out.println(host + path1 + " :API Call Verification is failed");
-			logStep(host + path1 + " :API Call Verification is failed");
-			Assert.fail(host + path1 + " call is not present in Charles session");
+			
+			//Assert.fail(host + path1 + " call is not present in Charles session");
 
 		}
 		
@@ -9367,10 +9688,21 @@ public class Utils extends Functions {
 		} else {
 			System.out.println(host + path2 + " call is not present in Charles session");
 			logStep(host + path2+ " call is not present in Charles session");
-			System.out.println(host + path2 + " :API Call Verification is failed");
-			logStep(host + path2 + " :API Call Verification is failed");
-			Assert.fail(host + path2 + " call is not present in Charles session");
+			//System.out.println(host + path2 + " :API Call Verification is failed");
+			//logStep(host + path2 + " :API Call Verification is failed");
+			//Assert.fail(host + path2 + " call is not present in Charles session");
 
+		}
+		
+		/**
+		 * Since the second call i.e. confiant-integrations.global.ssl.fastly.net/sdk/5.0.0/202204261912/wrap.js is a static call
+		 * and at times its cached for 15 minutes or more so there are chances that we may not see wrap.js call. 
+		 * hence ignoring the check of second call
+		 */
+		if (!flag1) {
+			System.out.println(host + path1 + " :API Call Verification is failed");
+			logStep(host + path1 + " :API Call Verification is failed");
+			Assert.fail(host + path1 + " call is not present in Charles session");
 		}
 	}
 
@@ -10422,8 +10754,25 @@ public class Utils extends Functions {
 
 							} else {
 
+								
 								if (listOf_criteo_Params.get(i).equalsIgnoreCase(customParamsList.get(i))) {
 									successCount++;
+									System.out.println(i + " Occurance of Criteo call " + cust_param + " value: "
+											+ listOf_criteo_Params.get(i) + " is matched with " + i
+											+ " Occurance of corresponding " + sheetName + " gampad call " + cust_param
+											+ " value: " + customParamsList.get(i));
+									logStep(i + " Occurance of Criteo call " + cust_param + " value: "
+											+ listOf_criteo_Params.get(i) + " is matched with " + i
+											+ " Occurance of corresponding " + sheetName + " gampad call " + cust_param
+											+ " value: " + customParamsList.get(i));
+								} else if (sheetName.equalsIgnoreCase("Interstitials")
+										&& cust_param.equalsIgnoreCase("size") && !customParamsList.get(i).equalsIgnoreCase("-1")) {
+									/**
+									 * Since interstitial ad size is different than the response in the criteo call, hence skipping the size comparison
+									 */
+									successCount++;
+									System.out.println(" Since interstitial ad size is different than the response in the criteo call, hence skipping the size comparison");
+									logStep(" Since interstitial ad size is different than the response in the criteo call, hence skipping the size comparison");
 									System.out.println(i + " Occurance of Criteo call " + cust_param + " value: "
 											+ listOf_criteo_Params.get(i) + " is matched with " + i
 											+ " Occurance of corresponding " + sheetName + " gampad call " + cust_param
@@ -10891,6 +11240,7 @@ public class Utils extends Functions {
 											logStep(i + " Occurance of corresponding " + sheetName + " gampad call: "
 													+ feedCall + " not having parameter " + cust_param);
 											failCount++;
+											break;
 										} else {
 											System.out.println(i + " Occurance of Criteo call " + cust_param
 													+ " value: " + listOf_criteo_Params.get(criteoIndex)
@@ -10903,6 +11253,7 @@ public class Utils extends Functions {
 													+ cust_param + " value: " + customParamsList.get(i));
 
 											successCount++;
+											break;
 										}
 
 									} else {

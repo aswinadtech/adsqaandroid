@@ -199,7 +199,7 @@ public class USAPrivacyTest extends TwcIosBaseTest {
 	  System.out.println("Kill and Launching the app after privacy optin is selected");
 	  logStep("Kill and Launching the app after privacy optin is selected");
 	  Functions.close_launchApp();
-	  Functions.checkForAppState();
+	  //Functions.checkForAppState();
 	  proxy.clearCharlesSession();
 	  Functions.close_launchApp();
 	  Functions.checkForAppState();
@@ -285,7 +285,7 @@ public class USAPrivacyTest extends TwcIosBaseTest {
 	 */
 	@Test(priority = 26, enabled = true)
 	@Description("Amazon aax call verification")
-	public void Verify_Amazon_Call_for_UA() throws Exception {
+	public void Verify_Amazon_Call_for_USA() throws Exception {
 		System.out.println("==============================================");
 		System.out.println("****** amazon-adsystem.com Call test case Started");
 		logStep("****** amazon-adsystem.com Call test case Started");
@@ -430,8 +430,8 @@ public class USAPrivacyTest extends TwcIosBaseTest {
 		proxy.clearCharlesSession();
 		System.out.println("Kill and Launching the app after privacy optout is selected");
 		logStep("Kill and Launching the app after privacy optout is selected");
-		Functions.close_launchApp();
-		Functions.checkForAppState();
+		//Functions.close_launchApp();
+		//Functions.checkForAppState();
 		Functions.close_launchApp();
 		Functions.checkForAppState();
 		proxy.clearCharlesSession();

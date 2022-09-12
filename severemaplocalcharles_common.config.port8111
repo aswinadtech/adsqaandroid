@@ -245,7 +245,7 @@
       <entry>
         <string>Map Local</string>
         <mapLocal>
-          <toolEnabled>false</toolEnabled>
+          <toolEnabled>true</toolEnabled>
           <mappings>
             <mapLocalMapping>
               <sourceLocation>

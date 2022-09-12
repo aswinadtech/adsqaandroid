@@ -126,7 +126,7 @@
       <x>20</x>
       <y>48</y>
       <width>900</width>
-      <height>694</height>
+      <height>814</height>
     </mainWindow>
     <lastCheckUpdates>2017-06-30 06:35:41.478 UTC</lastCheckUpdates>
   </startupConfiguration>
@@ -174,7 +174,7 @@
       </entry>
       <entry>
         <string>SessionFrame.splitPlane.dividerLocation.vertical</string>
-        <int>200</int>
+        <int>219</int>
       </entry>
       <entry>
         <string>SessionFrame.navTabs.mode</string>
@@ -273,7 +273,7 @@
                   <matchValueRegex>true</matchValueRegex>
                   <matchRequest>false</matchRequest>
                   <matchResponse>true</matchResponse>
-                  <newValue>&quot;mode&quot; : &quot;severe1&quot;</newValue>
+                  <newValue>&quot;mode&quot; : &quot;severe2&quot;</newValue>
                   <newHeaderRegex>false</newHeaderRegex>
                   <newValueRegex>false</newValueRegex>
                   <matchWholeValue>false</matchWholeValue>
@@ -288,8 +288,20 @@
       <entry>
         <string>Map Local</string>
         <mapLocal>
-          <toolEnabled>false</toolEnabled>
-          <mappings/>
+          <toolEnabled>true</toolEnabled>
+          <mappings>
+            <mapLocalMapping>
+              <sourceLocation>
+                <protocol>https</protocol>
+                <host>dsx.weather.com</host>
+                <path>/cms/v4/list/en_US/ios/video/app</path>
+                <query>*</query>
+              </sourceLocation>
+              <dest>/Users/narasimhanukala/Work/TWC/MobileAutomation/Branch/Narasimha/adsqaios-automation/src/test/resources/Editorial.json</dest>
+              <enabled>true</enabled>
+              <caseSensitive>false</caseSensitive>
+            </mapLocalMapping>
+          </mappings>
         </mapLocal>
       </entry>
       <entry>

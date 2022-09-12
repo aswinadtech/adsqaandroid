@@ -170,7 +170,7 @@ public class LogInScreen extends Utils {
 			attachScreen();
 			
 			try {
-				TestBase.waitForVisibilityOfElementLocated(Ad, 30, byAppleIdInput);
+				TestBase.waitForVisibilityOfElementLocated(Ad, 45, byAppleIdInput);
 				appleIdInput = Ad.findElement(byAppleIdInput);
 				applePasswordInput = Ad.findElement(byApplePasswordInput);
 				
@@ -193,17 +193,21 @@ public class LogInScreen extends Utils {
 				attachScreen();
 			}
 			
-			
-			TestBase.waitForVisibilityOfElementLocated(Ad, 90, bySandboxPasswordInput);
-			sandboxPasswordInput = Ad.findElement(bySandboxPasswordInput);
-			TestBase.typeText(sandboxPasswordInput, "Sandbox Password", applePwd);
-			attachScreen();
-			
-			sandboxSignInButton = Ad.findElement(bySandboxSignInButton);
-			TestBase.clickOnElement(bySandboxSignInButton, sandboxSignInButton, "Sandbox Sign In Button");
-			attachScreen();
-			
-			TestBase.waitForVisibilityOfElementLocated(Ad, 120, byYouAreAllSetText);
+			try {
+				TestBase.waitForVisibilityOfElementLocated(Ad, 60, bySandboxPasswordInput);
+				sandboxPasswordInput = Ad.findElement(bySandboxPasswordInput);
+				TestBase.typeText(sandboxPasswordInput, "Sandbox Password", applePwd);
+				attachScreen();
+				
+				sandboxSignInButton = Ad.findElement(bySandboxSignInButton);
+				TestBase.clickOnElement(bySandboxSignInButton, sandboxSignInButton, "Sandbox Sign In Button");
+				attachScreen();	
+			}catch (Exception e) {
+				System.out.println("Sandbox password input not displayed");
+				logStep("Sandbox password input not displayed");
+			}
+						
+			TestBase.waitForVisibilityOfElementLocated(Ad, 60, byYouAreAllSetText);
 			youAreAllSetOK = Ad.findElement(byYouAreAllSetOK);
 			TestBase.clickOnElement(byYouAreAllSetOK, youAreAllSetOK, "You Are All Set OK Button");
 			attachScreen();
@@ -240,7 +244,7 @@ public class LogInScreen extends Utils {
 			TestBase.clickOnElement(byPremiumProAnnualButton, premiumProAnnualButton, "Premium Pro Annual Button");
 			attachScreen();
 			try {
-				TestBase.waitForVisibilityOfElementLocated(Ad, 30, byAppleIdInput);
+				TestBase.waitForVisibilityOfElementLocated(Ad, 45, byAppleIdInput);
 				appleIdInput = Ad.findElement(byAppleIdInput);
 				applePasswordInput = Ad.findElement(byApplePasswordInput);
 				
@@ -264,16 +268,21 @@ public class LogInScreen extends Utils {
 			}
 			
 			
-			TestBase.waitForVisibilityOfElementLocated(Ad, 90, bySandboxPasswordInput);
-			sandboxPasswordInput = Ad.findElement(bySandboxPasswordInput);
-			TestBase.typeText(sandboxPasswordInput, "Sandbox Password", applePwd);
-			attachScreen();
+			try {
+				TestBase.waitForVisibilityOfElementLocated(Ad, 60, bySandboxPasswordInput);
+				sandboxPasswordInput = Ad.findElement(bySandboxPasswordInput);
+				TestBase.typeText(sandboxPasswordInput, "Sandbox Password", applePwd);
+				attachScreen();
+				
+				sandboxSignInButton = Ad.findElement(bySandboxSignInButton);
+				TestBase.clickOnElement(bySandboxSignInButton, sandboxSignInButton, "Sandbox Sign In Button");
+				attachScreen();	
+			}catch (Exception e) {
+				System.out.println("Sandbox password input not displayed");
+				logStep("Sandbox password input not displayed");
+			}
 			
-			sandboxSignInButton = Ad.findElement(bySandboxSignInButton);
-			TestBase.clickOnElement(bySandboxSignInButton, sandboxSignInButton, "Sandbox Sign In Button");
-			attachScreen();
-			
-			TestBase.waitForVisibilityOfElementLocated(Ad, 120, byYouAreAllSetText);
+			TestBase.waitForVisibilityOfElementLocated(Ad, 60, byYouAreAllSetText);
 			youAreAllSetOK = Ad.findElement(byYouAreAllSetOK);
 			TestBase.clickOnElement(byYouAreAllSetOK, youAreAllSetOK, "You Are All Set OK Button");
 			attachScreen();

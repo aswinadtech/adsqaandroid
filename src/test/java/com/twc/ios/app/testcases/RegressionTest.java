@@ -45,7 +45,8 @@ public class RegressionTest extends TwcIosBaseTest {
 	private static final String BN_SEVERE2_CONFIG_FILE_PATH = "BNSevere2charles_common.config";
 	private static final String CRITEO_CONFIG_FILE_PATH = "Criteocharles_common.config";
 	private static final String SEVERE_MAP_LOCAL_CONFIG_FILE_PATH = "severemaplocalcharles_common.config";
-	private static final String EDITORIAL_MAP_LOCAL_CONFIG_FILE_PATH = "editorialmaplocalcharles_common.config";
+	private static final String EDITORIAL_SEVERE1_MAP_LOCAL_CONFIG_FILE_PATH = "editorialsevere1maplocalcharles_common.config";
+	private static final String EDITORIAL_SEVERE2_MAP_LOCAL_CONFIG_FILE_PATH = "editorialsevere2maplocalcharles_common.config";
 	private static final String TORNADO_MAP_LOCAL_CONFIG_FILE_PATH = "tornadomaplocalcharles_common.config";
 	private static final String HEATADVISORY_MAP_LOCAL_CONFIG_FILE_PATH = "headadvisorymaplocalcharles_common.config";
 
@@ -183,7 +184,6 @@ public class RegressionTest extends TwcIosBaseTest {
 		TestBase.waitForMilliSeconds(5000);
 		proxy.getXml();
 		Utils.createXMLFileForCharlesSessionFile();
-		//Utils.verifyConfiantSDKInitializationCalls("Smoke", "Confiant");
 		Utils.get_v3_wx_forecast_daily_15day_data();
 	}
 
@@ -573,11 +573,11 @@ public class RegressionTest extends TwcIosBaseTest {
 			loginScreen.enableMonthlyPremiumSubscription("jmktwc4@gmail.com", "300Interstate");
 //			loginScreen.enableYearlyPremiumSubscription("jmktwc4@gmail.com", "300Interstate");
 		} finally {
-			Functions.close_launchApp();
-			attachScreen();
 			subscriptionFqCapStrtTime = System.nanoTime();
 			start = System.nanoTime();
-					
+			Functions.close_launchApp();
+			attachScreen();
+								
 			Utils.getCurrentMacIPAddressAndSetiPhoneProxy(true, true);
 			
 			Ad.launchApp();
@@ -850,9 +850,9 @@ public class RegressionTest extends TwcIosBaseTest {
 		proxy.clearCharlesSession();
 		Functions.close_launchApp();
 		Functions.checkForAppState();
-		proxy.clearCharlesSession();
 		Functions.archive_folder("Charles");
-		hrTab.navigateToHourlyTab();
+		//hrTab.navigateToHourlyTab();
+		hrTab.navigateToHourlyTabAndHandleInterstitialAd();
 		Functions.put_Background_launch(10);
 		proxy.getXml();
 		Utils.createXMLFileForCharlesSessionFile();
@@ -1256,7 +1256,7 @@ public class RegressionTest extends TwcIosBaseTest {
 		Functions.checkForAppState();
 		addrScreen.enternewAddress(false, "Atlanta, Georgia");
 		TestBase.waitForMilliSeconds(20000);
-		Utils.navigateTofeedCard("breakingnews");
+		Utils.navigateTofeedCard("breakingnews", false, false);
 		proxy.getXml();
 		Utils.createXMLFileForCharlesSessionFile();
 		
@@ -1298,6 +1298,19 @@ public class RegressionTest extends TwcIosBaseTest {
 		logStep("Validating pos custom parameter of Breaking News Severe1 call ");
 
 		Utils.validate_custom_param_val_of_gampad("Smoke", "BreakingNews", "pos", "app_sl");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Breaking News Severe1 call
+	 */
+	@Test(priority = 354, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Breaking News Severe1 call ")
+	public void Validate_BreakingNews_Severe1_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Breaking News Severe1 call");
+		logStep("Validating ltv custom parameter of Breaking News Severe1 call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "BreakingNews", "ltv", "NotNull");
 
 	}
 
@@ -1347,7 +1360,7 @@ public class RegressionTest extends TwcIosBaseTest {
 		Utils.validate_custom_param_val_of_gampad("Smoke", "PreRollVideo", "ref", "brn");
 
 	}
-
+	
 	@Test(priority = 375, enabled = true)
 	@Description("Enabling Preconfiguration for Severe2 Breaking News Card")
 	public void enable_PreConfiguration_for_servere2_BreakingNewsCard() throws Exception {
@@ -1370,7 +1383,7 @@ public class RegressionTest extends TwcIosBaseTest {
 		Functions.checkForAppState();
 		addrScreen.enternewAddress(false, "Atlanta, Georgia");
 		TestBase.waitForMilliSeconds(20000);
-		Utils.navigateTofeedCard("breakingnews");
+		Utils.navigateTofeedCard("breakingnews", false, false);
 		proxy.getXml();
 		Utils.createXMLFileForCharlesSessionFile();
 
@@ -1412,6 +1425,19 @@ public class RegressionTest extends TwcIosBaseTest {
 		logStep("Validating pos custom parameter of Breaking News Severe2 call ");
 
 		Utils.validate_custom_param_val_of_gampad("Smoke", "BreakingNews", "pos", "app_sl");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Breaking News Severe2 call
+	 */
+	@Test(priority = 379, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Breaking News Severe2 call ")
+	public void Validate_BreakingNews_Severe2_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Breaking News Severe2 call");
+		logStep("Validating ltv custom parameter of Breaking News Severe2 call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "BreakingNews", "ltv", "NotNull");
 
 	}
 
@@ -1470,8 +1496,8 @@ public class RegressionTest extends TwcIosBaseTest {
 		
 		proxy.quitCharlesProxy();
 		String jsonPath = "src/test/resources/Editorial.json";
-		reWriteContentModeAndMapLocalForEditorialVideoHeadLineCard(EDITORIAL_MAP_LOCAL_CONFIG_FILE_PATH, jsonPath, "severe1");
-		proxy = new CharlesProxy("localhost", 8111, EDITORIAL_MAP_LOCAL_CONFIG_FILE_PATH);
+		reWriteContentModeAndMapLocalForEditorialVideoHeadLineCard(EDITORIAL_SEVERE1_MAP_LOCAL_CONFIG_FILE_PATH, jsonPath, "severe1");
+		proxy = new CharlesProxy("localhost", 8111, EDITORIAL_SEVERE1_MAP_LOCAL_CONFIG_FILE_PATH);
 		proxy.startCharlesProxyWithUI();
 		proxy.stopRecording();
 		proxy.enableMapLocal();
@@ -1492,7 +1518,7 @@ public class RegressionTest extends TwcIosBaseTest {
 		addrScreen.enternewAddress(false, "Atlanta, Georgia");
 		TestBase.waitForMilliSeconds(20000);
 			
-		Utils.navigateTofeedCard("Breaking News");		
+		Utils.navigateTofeedCard("Breaking News", false, false);		
 		proxy.getXml();
 		Utils.createXMLFileForCharlesSessionFile();
 	}
@@ -1530,6 +1556,21 @@ public class RegressionTest extends TwcIosBaseTest {
 
 	}
 	
+	/**
+	 * This method validates bn custom parameter of Editorial Video Headline Card Breaking News Severe1 Video1
+	 * call
+	 */
+	@Test(priority = 403, enabled = true)
+	@Description("Validating 'bn' custom parameter of Editorial Video Headline Card Breaking News Severe1 Video1 call ")
+	public void Validate_Editorial_Video_Headline_Card_Breaking_News_Card_Video1_Severe1_bn_Custom_params() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating bn custom parameter of Editorial Video Headline Card Breaking News Severe1 Video1 call");
+		logStep("Validating bn custom parameter of Editorial Video Headline Card Breaking News Severe1 Video1 call");
+
+		Utils.validate_custom_param_val_of_gampad("Smoke", "PreRollVideo", "bn", "h");
+
+	}
+	
 	@Test(priority = 425, enabled = true)
 	@Description("Enabling Preconfiguration for Severe2 Editorial Video Headline Card Breaking News Card")
 	public void enable_PreConfiguration_for_servere2_EditorialVideoHeadlineCard_BreakingNewsCard() throws Exception {
@@ -1539,8 +1580,8 @@ public class RegressionTest extends TwcIosBaseTest {
 		
 		proxy.quitCharlesProxy();
 		String jsonPath = "src/test/resources/Editorial.json";
-		reWriteContentModeAndMapLocalForEditorialVideoHeadLineCard(EDITORIAL_MAP_LOCAL_CONFIG_FILE_PATH, jsonPath, "severe2");
-		proxy = new CharlesProxy("localhost", 8111, EDITORIAL_MAP_LOCAL_CONFIG_FILE_PATH);
+		reWriteContentModeAndMapLocalForEditorialVideoHeadLineCard(EDITORIAL_SEVERE2_MAP_LOCAL_CONFIG_FILE_PATH, jsonPath, "severe2");
+		proxy = new CharlesProxy("localhost", 8111, EDITORIAL_SEVERE2_MAP_LOCAL_CONFIG_FILE_PATH);
 		proxy.startCharlesProxyWithUI();
 		proxy.stopRecording();
 		proxy.enableMapLocal();
@@ -1558,10 +1599,10 @@ public class RegressionTest extends TwcIosBaseTest {
 //		proxy.clearCharlesSession();
 //		Functions.close_launchApp();
 //		Functions.checkForAppState();
-		addrScreen.enternewAddress(false, "Atlanta, Georgia");
+		addrScreen.enternewAddress(false, "New York City, New York");
 		TestBase.waitForMilliSeconds(20000);
 			
-		Utils.navigateTofeedCard("Breaking News");	
+		Utils.navigateTofeedCard("Breaking News", false, false);	
 		proxy.getXml();
 		Utils.createXMLFileForCharlesSessionFile();
 	}
@@ -1596,6 +1637,21 @@ public class RegressionTest extends TwcIosBaseTest {
 		logStep("Validating ref custom parameter of Editorial Video Headline Card Breaking News Severe2 Video1 call ");
 
 		Utils.validate_custom_param_val_of_gampad("Smoke", "PreRollVideo", "ref", "brn");
+
+	}
+	
+	/**
+	 * This method validates bn custom parameter of Editorial Video Headline Card Breaking News Severe2 Video1
+	 * call
+	 */
+	@Test(priority = 428, enabled = true)
+	@Description("Validating 'bn' custom parameter of Editorial Video Headline Card Breaking News Severe2 Video1 call ")
+	public void Validate_Editorial_Video_Headline_Card_Breaking_News_Card_Video1_Severe2_bn_Custom_params() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating bn custom parameter of Editorial Video Headline Card Breaking News Severe2 Video1 call");
+		logStep("Validating bn custom parameter of Editorial Video Headline Card Breaking News Severe2 Video1 call ");
+
+		Utils.validate_custom_param_val_of_gampad("Smoke", "PreRollVideo", "bn", "y");
 
 	}
 
@@ -1919,7 +1975,7 @@ public class RegressionTest extends TwcIosBaseTest {
 			TestBase.waitForMilliSeconds(20000);
 			// Since as part of sticky ad implementation on UI weather.feed1 appears as weather.feed0 and so on
 			//hence modified Integrated feed card name to weather.feed0 from weather.feed1
-			Utils.navigateTofeedCard("weather.feed0");
+			Utils.navigateTofeedCard("weather.feed0", false, false);
 			TestBase.waitForMilliSeconds(20000);
 					
 		} finally {
@@ -1996,7 +2052,7 @@ public class RegressionTest extends TwcIosBaseTest {
 			TestBase.waitForMilliSeconds(20000);
 			// Since as part of sticky ad implementation on UI weather.feed1 appears as weather.feed0 and so on
 			//hence modified Integrated feed card name to weather.feed0 from weather.feed1
-			Utils.navigateTofeedCard("weather.feed0");
+			Utils.navigateTofeedCard("weather.feed0", false, false);
 			TestBase.waitForMilliSeconds(20000);		
 			
 		} finally {
@@ -2066,7 +2122,7 @@ public class RegressionTest extends TwcIosBaseTest {
 
 	}
 
-	@Test(priority = 801, enabled = true)
+	@Test(priority = 800, enabled = true)
 	@Description("Verify Entry Interstitial Ads of Hourly Tab")
 	public void Verify_interstitial_ads_hourlyTab() throws Exception {
 		System.out.println("==============================================");
@@ -2083,6 +2139,19 @@ public class RegressionTest extends TwcIosBaseTest {
 		Functions.checkForAppState();
 		Functions.unlimitedInterstitial = true;
 		Utils.assertinterStitialAd("Smoke", "Hourly", "hourlyTab", "Entry");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of Interstitial call
+	 */
+	@Test(priority = 801, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Interstitial call ")
+	public void Validate_Interstitial_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Interstitial call");
+		logStep("Validating ltv custom parameter of Interstitial call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Interstitials", "ltv", "NotNull");
 
 	}
 
@@ -2248,14 +2317,27 @@ public class RegressionTest extends TwcIosBaseTest {
 		System.out.println("==============================================");
 		System.out.println("****** Enable Preconfiguration for Watson Moment and Planning Moment Cards");
 		logStep("Enable Preconfiguration for Watson Moment and Planning Moment Cards ");
-		hmTab.clickonHomeTab();
+		
+		proxy.quitCharlesProxy();
+		this.configFile = this.changeVt1ContentMode(BN_SEVERE1_CONFIG_FILE_PATH, "severe1");
+		proxy = new CharlesProxy("localhost", 8111, BN_SEVERE1_CONFIG_FILE_PATH);
+		proxy.startCharlesProxyWithUI();
+		proxy.enableRewriting();
+		proxy.startRecording();
+		proxy.disableMapLocal();
+		Functions.close_launchApp();
+		Functions.checkForAppState();
+		//stScreen.clear_Airlock_Cache();
+				
+		//hmTab.clickonHomeTab();
 		stScreen.select_Airlock_Branch("WM Cards New1");
 		stScreen.select_Airlock_UserGroup("WM Cards");
 		Functions.close_launchApp();
 		Functions.checkForAppState();
-		proxy.clearCharlesSession();
+		hrTab.navigateToHourlyTabAndHandleInterstitialAd();
 		Functions.archive_folder("Charles");
 		TestBase.waitForMilliSeconds(5000);
+		proxy.clearCharlesSession();
 		addrScreen.enternewAddress(false, "New York City, New York");
 		TestBase.waitForMilliSeconds(20000);
 		try {
@@ -2315,6 +2397,19 @@ public class RegressionTest extends TwcIosBaseTest {
 		Utils.Verify_Gampad_Call_ByResponseText("Smoke", "WeekAhead");
 
 	}
+	
+	/**
+	 * This method validates ltv custom parameter of WeekAhead call
+	 */
+	@Test(priority = 906, enabled = true)
+	@Description("Validating 'ltv' custom parameter of WeekAhead call ")
+	public void Validate_Week_Ahead_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of WeekAhead call");
+		logStep("Validating ltv custom parameter of WeekAhead call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "WeekAhead", "ltv", "NotNull");
+
+	}
 
 	@Test(priority = 911, enabled = true)
 	@Description("Verify Weekend ad call iu")
@@ -2362,6 +2457,19 @@ public class RegressionTest extends TwcIosBaseTest {
 		Utils.Verify_Gampad_Call_ByResponseText("Smoke", "Weekend");
 
 	}
+	
+	/**
+	 * This method validates ltv custom parameter of Weekend call
+	 */
+	@Test(priority = 915, enabled = true)
+	@Description("Validating 'ltv' custom parameter of Weekend call ")
+	public void Validate_Weekend_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of Weekend call");
+		logStep("Validating ltv custom parameter of Weekend call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "Weekend", "ltv", "NotNull");
+
+	}
 
 	@Test(priority = 921, enabled = true)
 	@Description("Verify WM Flu ad call iu")
@@ -2407,6 +2515,19 @@ public class RegressionTest extends TwcIosBaseTest {
 		logStep("Validating WM Flu call response in charles ");
 
 		Utils.Verify_Gampad_Call_ByResponseText("Smoke", "WMFlu");
+
+	}
+	
+	/**
+	 * This method validates ltv custom parameter of WM Flu call
+	 */
+	@Test(priority = 925, enabled = true)
+	@Description("Validating 'ltv' custom parameter of WM Flu call ")
+	public void Validate_WMFlu_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of WM Flu call");
+		logStep("Validating ltv custom parameter of WM Flu call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "WMFlu", "ltv", "NotNull");
 
 	}
 
@@ -2457,6 +2578,19 @@ public class RegressionTest extends TwcIosBaseTest {
 
 	}
 	
+	/**
+	 * This method validates ltv custom parameter of WM Allergy call
+	 */
+	@Test(priority = 935, enabled = true)
+	@Description("Validating 'ltv' custom parameter of WM Allergy call ")
+	public void Validate_WMAllergy_ltv_Custom_param() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating ltv custom parameter of WM Allergy call");
+		logStep("Validating ltv custom parameter of WM Allergy call ");
+		Utils.validate_custom_param_val_of_gampad("Smoke", "WMAllergy", "ltv", "NotNull");
+
+	}
+	
 	@Test(priority = 950, enabled = true)
 	@Description("Validating Safety And Preparedness call Response")
 	public void Validate_SafetyAndPreparednessCard_Call_Response() throws Exception {
@@ -2465,6 +2599,17 @@ public class RegressionTest extends TwcIosBaseTest {
 		logStep("Validating SafetyAndPreparednessCard call response in charles ");
 
 		Utils.Verify_Gampad_Call_ByResponseText("Smoke", "SafetyAndPreparedness(Test)");
+
+	}
+	
+	@Test(priority = 951, enabled = true)
+	@Description("Validating Breaking News Severe1 call Response")
+	public void Validate_BreakingNews_Severe1_Call_Response() throws Exception {
+		System.out.println("==============================================");
+		System.out.println("****** Validating Breaking News Severe1 call response in charles");
+		logStep("Validating Breaking News Severe1 call response in charles ");
+
+		Utils.Verify_Gampad_Call_ByResponseText("Smoke", "BreakingNews(Test)");
 
 	}
 	
@@ -2530,7 +2675,8 @@ public class RegressionTest extends TwcIosBaseTest {
 			
 			// navigate to Planning Card
 			Functions.archive_folder("Charles");
-			Utils.navigateTofeedCard("planning-containerView");
+			//Utils.navigateTofeedCard("planning-containerView", false, false);
+			pScreen.scrollToPlanningCard();
 			proxy.clearCharlesSession();
 			Functions.archive_folder("Charles");
 			
@@ -2543,10 +2689,11 @@ public class RegressionTest extends TwcIosBaseTest {
 			Functions.archive_folder("Charles");
 			
 			TestBase.waitForMilliSeconds(3000);
-			System.out.println("****** Verifying when scroll left");
-			logStep("****** Verifying when scroll left");
-			Functions.scroll_Left();
-			//Functions.swipe_Left();
+			System.out.println("****** Verifying when swipe left On Planning Card");
+			logStep("****** Verifying when swipe left On Planning Card");
+			//Functions.scroll_Left();
+			pScreen.swipeLeftOnPlanningCard();
+			
 			proxy.getXml();
 			Utils.createXMLFileForCharlesSessionFile();
 			Utils.validate_custom_param_val_of_gampad("Smoke", "PulltorefreshTestMode", "mr", "1");
@@ -2565,9 +2712,10 @@ public class RegressionTest extends TwcIosBaseTest {
 			//Functions.swipe_Left();
 			//Functions.scroll_Left();
 			TestBase.waitForMilliSeconds(3000);
-			System.out.println("****** Verifying when scroll right");
-			logStep("****** Verifying when scroll right");
-			Functions.scroll_Right();
+			System.out.println("****** Verifying when swipe right on Planning Card");
+			logStep("****** Verifying when swipe right on Planning Card");
+			//Functions.scroll_Right();
+			pScreen.swipeRightOnPlanningCard();
 			proxy.getXml();
 			Utils.createXMLFileForCharlesSessionFile();
 			Utils.validate_custom_param_val_of_gampad("Smoke", "PulltorefreshTestMode", "mr", "1");
@@ -2705,7 +2853,7 @@ public class RegressionTest extends TwcIosBaseTest {
 		//addrScreen.enternewAddress(false, "New York City, New York");
 				
 		try {
-			Utils.navigateTofeedCard("Severe Outlook");
+			Utils.navigateTofeedCard("Severe Outlook", false, false);
 					
 		} catch (Exception e) {
 			System.out.println("There is an exception while navigting to Severe Outlook card");

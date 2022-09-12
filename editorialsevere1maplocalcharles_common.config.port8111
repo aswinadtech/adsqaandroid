@@ -173,14 +173,6 @@
         <columnStates/>
       </entry>
       <entry>
-        <string>SessionFrame.splitPlane.dividerLocation.vertical</string>
-        <int>200</int>
-      </entry>
-      <entry>
-        <string>SessionFrame.navTabs.mode</string>
-        <string>Sequence</string>
-      </entry>
-      <entry>
         <string>NavigatorJTable.TABLE_COLUMN_STATES</string>
         <columnStates/>
       </entry>
@@ -288,8 +280,20 @@
       <entry>
         <string>Map Local</string>
         <mapLocal>
-          <toolEnabled>false</toolEnabled>
-          <mappings/>
+          <toolEnabled>true</toolEnabled>
+          <mappings>
+            <mapLocalMapping>
+              <sourceLocation>
+                <protocol>https</protocol>
+                <host>dsx.weather.com</host>
+                <path>/cms/v4/list/en_US/ios/video/app</path>
+                <query>*</query>
+              </sourceLocation>
+              <dest>/Users/narasimhanukala/Work/TWC/MobileAutomation/Branch/Narasimha/adsqaios-automation/src/test/resources/Editorial.json</dest>
+              <enabled>true</enabled>
+              <caseSensitive>false</caseSensitive>
+            </mapLocalMapping>
+          </mappings>
         </mapLocal>
       </entry>
       <entry>

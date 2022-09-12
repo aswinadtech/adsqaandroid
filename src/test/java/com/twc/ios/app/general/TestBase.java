@@ -19,6 +19,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
 import org.openqa.selenium.interactions.Actions;
@@ -224,6 +225,22 @@ public class TestBase extends Driver{
 	 */
 	public static boolean isElementDisplayed(MobileElement element) {
 		return element.isDisplayed();
+	}
+	
+	/**
+	 * 
+	 * @param locator
+	 * @return
+	 */
+	public  static boolean isElementDisplayed(By locator) {
+		boolean isVisible;
+		try {
+			isVisible = Ad.findElement(locator).isDisplayed();
+		} catch (final WebDriverException e) {
+			isVisible = false;
+		}
+		System.out.println("Element visible: " + isVisible);
+		return isVisible;
 	}
 	
 	/**

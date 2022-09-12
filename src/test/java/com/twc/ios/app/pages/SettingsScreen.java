@@ -2,10 +2,14 @@ package com.twc.ios.app.pages;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.touch.TouchActions;
 import org.testng.Assert;
 
 import com.twc.ios.app.functions.Functions;
@@ -17,6 +21,10 @@ import com.twc.ios.app.general.Utils;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.ElementOption;
+import io.appium.java_client.touch.offset.PointOption;
 import io.qameta.allure.Step;
 
 public class SettingsScreen extends Utils {
@@ -164,7 +172,6 @@ public class SettingsScreen extends Utils {
 
 		navigateToPrivacyPage_From_Settings();
 		Thread.sleep(30000);
-
 		ReadExcelValues.excelValues(Excelname, sheetName);
 		String privacy_Optin_label = null;
 		String privacy_Optout_label = null;
@@ -177,15 +184,21 @@ public class SettingsScreen extends Utils {
 		// logStep("Returned From 'Navigate to Privacy'");
 		// Thread.sleep(30000);
 
-		swipe_Up(Ad);
-		swipe_Up(Ad);
-		swipe_Up(Ad);
+//		swipe_Up(Ad);
+//		swipe_Up(Ad);
+//		swipe_Up(Ad);
 		Thread.sleep(5000);
 		// swipe_Up();
 		try {
 			privacy_Optin = Ad.findElementByXPath(ReadExcelValues.data[23][Cap]);
 			//privacy_Optin_label = privacy_Optin.getAttribute("name");
 			privacy_Optin_label = TestBase.getElementAttribute(privacy_Optin, "name");
+			String isPrivacyOptInVisible = TestBase.getElementAttribute(privacy_Optin, "visible");
+			while (isPrivacyOptInVisible.equalsIgnoreCase("false")) {
+				swipe_Up(Ad);
+				isPrivacyOptInVisible = TestBase.getElementAttribute(privacy_Optin, "visible");
+			}
+			
 			try {
 				privacy_Optout = Ad.findElementByXPath(ReadExcelValues.data[24][Cap]);
 				//privacy_Optout_label = privacy_Optout.getAttribute("name");
@@ -268,15 +281,20 @@ public class SettingsScreen extends Utils {
 //		System.out.println("Returned From 'Navigate to Privacy'");
 //		logStep("Returned From 'Navigate to Privacy'");
 
-		swipe_Up(Ad);
-		swipe_Up(Ad);
-		swipe_Up(Ad);
+//		swipe_Up(Ad);
+//		swipe_Up(Ad);
+//		swipe_Up(Ad);
 		Thread.sleep(5000);
 		// swipe_Up();
 		try {
 			privacy_Optin = Ad.findElementByXPath(ReadExcelValues.data[23][Cap]);
 			//privacy_Optin_label = privacy_Optin.getAttribute("name");
 			privacy_Optin_label = TestBase.getElementAttribute(privacy_Optin, "name");
+			String isPrivacyOptInVisible = TestBase.getElementAttribute(privacy_Optin, "visible");
+			while (isPrivacyOptInVisible.equalsIgnoreCase("false")) {
+				swipe_Up(Ad);
+				isPrivacyOptInVisible = TestBase.getElementAttribute(privacy_Optin, "visible");
+			}
 			try {
 				privacy_Optout = Ad.findElementByXPath(ReadExcelValues.data[24][Cap]);
 				//privacy_Optout_label = privacy_Optout.getAttribute("name");
@@ -376,9 +394,9 @@ public class SettingsScreen extends Utils {
 				logStep("An Exception while Switching to Native App Context");
 			}
 
-			swipe_Up(Ad);
-			swipe_Up(Ad);
-			swipe_Up(Ad);
+//			swipe_Up(Ad);
+//			swipe_Up(Ad);
+//			swipe_Up(Ad);
 			Thread.sleep(5000);
 			// swipe_Up();
 
@@ -386,6 +404,11 @@ public class SettingsScreen extends Utils {
 				privacy_Optin = Ad.findElementByXPath(ReadExcelValues.data[23][Cap]);
 				//privacy_Optin_label = privacy_Optin.getAttribute("name");
 				privacy_Optin_label = TestBase.getElementAttribute(privacy_Optin, "name");
+				String isPrivacyOptInVisible = TestBase.getElementAttribute(privacy_Optin, "visible");
+				while (isPrivacyOptInVisible.equalsIgnoreCase("false")) {
+					swipe_Up(Ad);
+					isPrivacyOptInVisible = TestBase.getElementAttribute(privacy_Optin, "visible");
+				}
 				try {
 					privacy_Optout = Ad.findElementByXPath(ReadExcelValues.data[24][Cap]);
 					//privacy_Optout_label = privacy_Optout.getAttribute("name");

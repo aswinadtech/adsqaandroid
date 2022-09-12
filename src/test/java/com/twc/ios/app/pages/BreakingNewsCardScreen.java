@@ -91,7 +91,7 @@ public class BreakingNewsCardScreen extends Utils {
 				byBreakingNews = MobileBy.AccessibilityId(breakingNow_AccessibilityId);
 				breakingNews = Ad.findElement(byBreakingNews);
 			}
-			CharlesProxy.proxy.clearCharlesSession();
+			proxy.clearCharlesSession();
 			TestBase.clickOnElement(byBreakingNews, breakingNews, "Breaking News Item", proxy);
 			TestBase.waitForMilliSeconds(15000);
 			System.out.println("Navigated to Breaking News Details page");
@@ -110,7 +110,7 @@ public class BreakingNewsCardScreen extends Utils {
 	public void navigateToEditorialVideoHeadlineCardBreakingNewsDetailsPage(CharlesProxy proxy) throws Exception {
 		try {
 			editorialVideobreakingNews = Ad.findElement(byEditorialVideobreakingNews);
-			CharlesProxy.proxy.clearCharlesSession();
+			proxy.clearCharlesSession();
 			TestBase.clickOnElement(byEditorialVideobreakingNews, editorialVideobreakingNews, "Editorial Video Headline Card Breaking News Item", proxy);
 			TestBase.waitForMilliSeconds(15000);
 			System.out.println("Navigated to Editorial Video Headline Card Breaking News Details page");

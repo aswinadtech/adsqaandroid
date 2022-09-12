@@ -451,6 +451,22 @@ public class AddressScreen extends Utils {
 						} catch (Exception e2) {
 							System.out.println("There is an exception while selecting desired location from list");
 							logStep("There is an exception while selecting desired location from list");
+							TempEle.clear();
+							//TempEle.click();
+							//TempEle.click();
+							TestBase.clickOnElement(byAddCityOrZIPCode, TempEle, "Add City Or Zip Code");
+							TestBase.clickOnElement(byAddCityOrZIPCode, TempEle, "Add City Or Zip Code");
+							//TempEle.sendKeys(zip);
+							TestBase.typeText(TempEle, "Add City Or Zip Code", zip);
+							//Ad.findElementByName("Search").click();
+							search = Ad.findElement(bySearch);
+							TestBase.clickOnElement(bySearch, search, "Search Button");
+							//Ad.findElementByName(zip).click();
+							By byLocationName = MobileBy.name(zip);
+							locationNameElement = Ad.findElement(byLocationName);
+							TestBase.clickOnElement(byLocationName, locationNameElement, "Location Name");
+							System.out.println(zip + " address Selected");
+							logStep(zip + " address Selected");
 						}
 					
 					}
@@ -827,8 +843,8 @@ public class AddressScreen extends Utils {
 							search = Ad.findElement(bySearch);
 							TestBase.clickOnElement(bySearch, search, "Search Button");
 						} catch (Exception e2) {
-							System.out.println("There is an exception while clicking Search icon after input address");
-							logStep("There is an exception while clicking Search icon after input address");
+							System.out.println("There is an exception while clicking Search icon after input address in catch block");
+							logStep("There is an exception while clicking Search icon after input address in catch block");
 						}
 						TestBase.waitForMilliSeconds(5000);
 						
@@ -843,6 +859,22 @@ public class AddressScreen extends Utils {
 						} catch (Exception e2) {
 							System.out.println("There is an exception while selecting desired location from list");
 							logStep("There is an exception while selecting desired location from list");
+							TempEle.clear();
+							//TempEle.click();
+							//TempEle.click();
+							TestBase.clickOnElement(byAddCityOrZIPCode, TempEle, "Add City Or Zip Code");
+							TestBase.clickOnElement(byAddCityOrZIPCode, TempEle, "Add City Or Zip Code");
+							//TempEle.sendKeys(zip);
+							TestBase.typeText(TempEle, "Add City Or Zip Code", zip);
+							//Ad.findElementByName("Search").click();
+							search = Ad.findElement(bySearch);
+							TestBase.clickOnElement(bySearch, search, "Search Button");
+							//Ad.findElementByName(zip).click();
+							By byLocationName = MobileBy.name(zip);
+							locationNameElement = Ad.findElement(byLocationName);
+							TestBase.clickOnElement(byLocationName, locationNameElement, "Location Name");
+							System.out.println(zip + " address Selected");
+							logStep(zip + " address Selected");
 						}
 					
 					}
@@ -852,6 +884,7 @@ public class AddressScreen extends Utils {
 				attachScreen();
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			attachScreen();
 			System.out.println("There is an exception in the process of address input");
 			logStep("There is an exception in the process of address input");

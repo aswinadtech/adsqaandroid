@@ -2048,7 +2048,8 @@ public class SmokeTestForPageObjectTesting extends TwcIosBaseTest {
 		TestBase.waitForMilliSeconds(5000);
 		// navigate to Planning Card
 		// Utils.navigateToPlanningCard();
-		Utils.navigateTofeedCard("planning-containerView");
+		//Utils.navigateTofeedCard("planning-containerView", false, false);
+		pScreen.scrollToPlanningCard();
 		TestBase.waitForMilliSeconds(5000);
 		// navigate to Hourly Details from Planning Card
 		pScreen.navigateToHourlyDetailsFromPlanningCard();
@@ -2777,7 +2778,7 @@ public class SmokeTestForPageObjectTesting extends TwcIosBaseTest {
 		logStep("****** Seasonal Hub Details page validation test cases Started");
 		addrScreen.enternewAddress(false, "Atlanta, Georgia");
 		TestBase.waitForMilliSeconds(10000);
-		Utils.navigateTofeedCard("seasonalhub");
+		Utils.navigateTofeedCard("seasonalhub", false, false);
 		Functions.archive_folder("Charles");
 		sScreen.verifyPubadCal_SeasonalHub("Smoke", "SeasonalHub(Details)");
 		hmTab.clickonHomeTab();

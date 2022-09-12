@@ -21,7 +21,7 @@ public class AirQualityCardScreen extends Utils {
 	By byAQCard = MobileBy.AccessibilityId(aQCard_AccessibilityId);
 	By byCloseLight = MobileBy.AccessibilityId(closeLight_AccessibilityId);
 	
-	
+	By byAirQualityCard = MobileBy.AccessibilityId("air-quality-card");
 
 	MobileElement aQCard = null;
 	MobileElement closeLight = null;
@@ -85,6 +85,12 @@ public class AirQualityCardScreen extends Utils {
 			logStep("Siri popup not present validating aq page ad");
 		}
 		attachScreen();
+	}
+	
+	public  void scrollToAQCard() throws Exception {
+		//aQCard = Ad.findElement(byAirQualityCard);
+//		Functions.genericScroll(byAirQualityCard, true, true, getOffsetYTop(), TOLERANCE_FROM_TOP);
+		Functions.genericScrollTWC(byAirQualityCard, true, true, getOffsetYTop(), TOLERANCE_FROM_TOP, false, false);
 	}
 
 }
